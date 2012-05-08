@@ -1,5 +1,7 @@
 #include <Windows.h>
 #include <iostream>
+#include <memory>
+#include "BlankWindowDemo.h"
 using namespace std;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -58,6 +60,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmdLine,
 
 	ShowWindow(hwnd, cmdShow);
 
+	//////////////////////////////////////////////////////////////////////////
+	std::tr1::shared_ptr<DemoBase> demo(new BlankDemo());
+
+	// Init
+	bool result = demo->Initialize(hInstance, hwnd);
+	if(!result)
+		return -1;
+	//////////////////////////////////////////////////////////////////////////
+
 	MSG msg = {0};
 
 	while (msg.message != WM_QUIT)
@@ -67,7 +78,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmdLine,
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+		else
+		{
+			// Update and Draw
+			demo->Update(0.0f);
+			demo->Render();
+		}
 	}
+
+	// Demo Shutdown
+	demo->ShutDown();
 
 	return static_cast<int>(msg.wParam);
 }
