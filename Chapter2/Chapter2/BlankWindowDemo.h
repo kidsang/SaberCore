@@ -7,9 +7,24 @@ class BlankDemo : public DemoBase
 {
 
 public:
-	virtual void Update( float dt );
+	BlankDemo();
+	virtual ~BlankDemo();
 
+	virtual void Update( float dt );
 	virtual void Render();
+
+	bool LoadContent();
+	void UnloadContent();
+
+private:
+	ID3D11VertexShader* solidColorVS_;
+	ID3D11PixelShader* solidColorPS_;
+
+	ID3D11InputLayout* inputLayout_;
+	ID3D11Buffer* vertexBuffer_;
+
+	ID3D11ShaderResourceView* colorMap_;
+	ID3D11SamplerState* colorMapSampler_;
 
 };
 

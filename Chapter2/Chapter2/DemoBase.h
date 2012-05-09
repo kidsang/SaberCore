@@ -4,6 +4,7 @@
 #include <d3d11.h>
 #include <d3dx11.h>
 #include <DxErr.h>
+#include <D3Dcompiler.h>
 
 class DemoBase
 {
@@ -19,6 +20,8 @@ public:
 
 	virtual void Update(float dt) = 0;
 	virtual void Render() = 0;
+
+	bool CompileD3DShader(char* filePath, char* entry, char* shaderModel, ID3DBlob** buffer);
 
 protected:
 	HINSTANCE hInstance_;
