@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A0416DB1-9433-4FB7-90A8-BAACF614E72A}</ProjectGuid>
-    <RootNamespace>Chapter2</RootNamespace>
+    <ProjectGuid>{DDB3D0DA-ECCF-4183-ABA0-9E48478F74D9}</ProjectGuid>
+    <RootNamespace>SpriteText</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -37,10 +37,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>../../dxinclude;$(IncludePath)</IncludePath>
+    <IncludePath>../../../dxinclude;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>../../dxlib/x86/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>../../../dxlib/x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -66,16 +66,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BlankWindowDemo.cpp" />
     <ClCompile Include="DemoBase.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="TextDemo.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BlankWindowDemo.h" />
     <ClInclude Include="DemoBase.h" />
+    <ClInclude Include="TextDemo.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SolidGreenColor.fx" />
+    <None Include="shader.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
