@@ -1,14 +1,11 @@
 #include <Windows.h>
 #include <iostream>
 #include <memory>
-#include "TextDemo.h"
+#include "InputDemo.h"
 using namespace std;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	PAINTSTRUCT ps;
-	HDC hDC;
-
 	switch (msg)
 	{
 	case WM_DESTROY:
@@ -56,7 +53,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmdLine,
 	ShowWindow(hwnd, cmdShow);
 
 	//////////////////////////////////////////////////////////////////////////
-	std::tr1::shared_ptr<DemoBase> demo(new TextDemo());
+	std::tr1::shared_ptr<DemoBase> demo(new InputDemo());
 
 	// Init
 	bool result = demo->Initialize(hInstance, hwnd);

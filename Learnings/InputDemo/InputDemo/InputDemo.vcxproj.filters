@@ -21,7 +21,7 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="TextDemo.cpp">
+    <ClCompile Include="InputDemo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <ClInclude Include="DemoBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="TextDemo.h">
+    <ClInclude Include="InputDemo.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
