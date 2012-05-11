@@ -1,7 +1,7 @@
 #include <Windows.h>
 #include <iostream>
 #include <memory>
-#include "BlankWindowDemo.h"
+#include "TextDemo.h"
 using namespace std;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -61,7 +61,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmdLine,
 	ShowWindow(hwnd, cmdShow);
 
 	//////////////////////////////////////////////////////////////////////////
-	std::tr1::shared_ptr<DemoBase> demo(new BlankDemo());
+	std::tr1::shared_ptr<DemoBase> demo(new TextDemo());
 
 	// Init
 	bool result = demo->Initialize(hInstance, hwnd);

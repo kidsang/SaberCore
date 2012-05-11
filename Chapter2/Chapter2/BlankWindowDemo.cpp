@@ -143,6 +143,8 @@ bool BlankDemo::LoadContent()
 	if (FAILED(d3dResult))
 		return false;
 
+	// texture
+
 	d3dResult = D3DX11CreateShaderResourceViewFromFile(d3dDevice_, L"saber.jpg", 0, 0, &colorMap_, 0);
 
 	if (FAILED(d3dResult))
