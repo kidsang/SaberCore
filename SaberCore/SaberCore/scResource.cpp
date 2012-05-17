@@ -14,6 +14,8 @@ scResource::~scResource(void)
 
 void scResource::Load(ID3D11Device* device)
 {
+	if (IsLoaded())
+		return;
 	if (LoadImpl(device))
 		mLoadingState = LS_LOADED;
 }
