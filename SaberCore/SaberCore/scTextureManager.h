@@ -4,14 +4,17 @@
 #include <d3dx11.h>
 #include <map>
 #include "scError.h"
+#include "scTexture.h"
+#include "scArchiveLoader.h"
 
-typedef std::map<std::string, ID3D11ShaderResourceView*> TextureList;
+typedef std::map<std::string, scTexture> TextureList;
 
 class scTextureManager
 {
 private:
 	ID3D11Device* mDevice;
 	TextureList mTextureList;
+	scArchiveLoader mArchiveLoader;
 
 public:
 	scTextureManager(void);
@@ -21,13 +24,26 @@ public:
 	void Initialize(ID3D11Device* device)
 	{
 		mDevice = device;
+
+		// 为了方便测试。。
+		LoadArchive("../../res/texture.txt");
+		LoadAll();
 	}
 
-	// 从文件装载纹理
-	bool LoadTexture(const std::string& file, const std::string& name);
+	// 读取资源路径文件
+	void LoadArchive(const std::string& filepath);
 
-	// 返回已装载的纹理,如果不存在则返回NULL
-	ID3D11ShaderResourceView* GetTexture(std::string name);
+	// 装载相应名称的资源
+	void LoadResource(const std::string& name);
+
+	// 装载一个组内的所有资源
+	void LoadGroup(const std::string& group);
+
+	// 装载全部资源
+	void LoadAll();
+
+	// 返纹理资源的指针,如果不存在则返回NULL
+	scTexture* GetResourcePtr(const std::string& name);
 	
 };
 

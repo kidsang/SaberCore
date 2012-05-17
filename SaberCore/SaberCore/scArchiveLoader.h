@@ -33,6 +33,7 @@ public:
 	bool Load(const std::string& filepath)
 	{
 		std::string group = "default";
+		mEntryList.clear();
 
 		FILE* file = fopen(filepath.c_str(), "r");
 		if (!file)
@@ -46,8 +47,6 @@ public:
 
 		while(fgets(buf, sizeof(buf), file))
 		{
-			mEntryList.clear();
-
 			s = std::string(buf);
 			int len = s.size();
 			if (s.empty())

@@ -40,8 +40,8 @@
     <IncludePath>../../dxinclude/;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>../../dxlib/x86;$(LibraryPath)</LibraryPath>
-    <OutDir>../../bin/Debug</OutDir>
+    <LibraryPath>../../dxlib/x86/;$(LibraryPath)</LibraryPath>
+    <OutDir>../../bin/Debug/</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -72,6 +72,8 @@
     <ClCompile Include="scMesh.cpp" />
     <ClCompile Include="scMeshManager.cpp" />
     <ClCompile Include="scRenderSystem.cpp" />
+    <ClCompile Include="scResource.cpp" />
+    <ClCompile Include="scTexture.cpp" />
     <ClCompile Include="scTextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -80,7 +82,12 @@
     <ClInclude Include="scMesh.h" />
     <ClInclude Include="scMeshManager.h" />
     <ClInclude Include="scRenderSystem.h" />
+    <ClInclude Include="scResource.h" />
+    <ClInclude Include="scTexture.h" />
     <ClInclude Include="scTextureManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\Debug\texture.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

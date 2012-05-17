@@ -33,6 +33,12 @@
     <ClCompile Include="scArchiveLoader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="scResource.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="scTexture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scRenderSystem.h">
@@ -53,5 +59,14 @@
     <ClInclude Include="scArchiveLoader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="scResource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="scTexture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\Debug\texture.txt" />
   </ItemGroup>
 </Project>

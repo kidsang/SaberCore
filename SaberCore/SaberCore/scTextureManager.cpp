@@ -9,49 +9,62 @@ scTextureManager::scTextureManager(void)
 scTextureManager::~scTextureManager(void)
 {
 	mDevice = 0;
-
-	// 释放所有纹理资源
-	for (auto iter = mTextureList.begin(); iter != mTextureList.end(); ++iter)
-	{
-		if ((*iter).second)
-		{
-			(*iter).second->Release();
-			(*iter).second = 0;
-		}
-	}
 }
 
-bool scTextureManager::LoadTexture( const std::string& file, const std::string& name )
-{
-	ID3D11ShaderResourceView* texture;
-	HRESULT hr;
-
-	hr = D3DX11CreateShaderResourceViewFromFileA(mDevice, file.c_str(), 0, 0, &texture, 0);
-	if (FAILED(hr))
-	{
-		scErrMsg("!!!Fail to load texture: " + file);
-		return false;
-	}
-
-	// 确保不存在重名
-	auto iter = mTextureList.find(name);
-	if (iter != mTextureList.end())
-	{
-		scErrMsg("!!!Texture name: " + name + " already exist.");
-		return false;
-	}
-
-	mTextureList.insert(make_pair(name, texture));
-
-	return true;
-}
-
-ID3D11ShaderResourceView* scTextureManager::GetTexture( std::string name )
+scTexture* scTextureManager::GetResourcePtr(const std::string& name )
 {
 	auto iter = mTextureList.find(name);
 	if (iter != mTextureList.end())
-		return (*iter).second;
+		return &((*iter).second);
 
 	scErrMsg("!!!Texture " + name + " not exists.");
 	return NULL;
+}
+
+void scTextureManager::LoadArchive(const std::string& filepath )
+{
+	mArchiveLoader.Load(filepath);
+
+	auto iter = mArchiveLoader.mEntryList.begin();
+	while (iter != mArchiveLoader.mEntryList.end())
+	{
+		auto it = mTextureList.find((*iter).name);
+		// 确保不出现重名
+		if (it == mTextureList.end()) 
+			mTextureList.insert(make_pair((*iter).name, scTexture((*iter).name, (*iter).path, (*iter).group)));
+		else
+			scErrMsg("!!!texture name " + (*iter).name + " is already exist.");
+
+		++iter;
+	}
+}
+
+void scTextureManager::LoadResource( const std::string& name )
+{
+	auto iter = mTextureList.find(name);
+	if (iter != mTextureList.end())
+		(*iter).second.Load(mDevice);
+	else
+		scErrMsg("!!!Texture " + name + " do not exist.");
+}
+
+void scTextureManager::LoadGroup( const std::string& group )
+{
+	auto iter = mTextureList.begin();
+	while (iter != mTextureList.end())
+	{
+		if ((*iter).second.GetGroup() == group)
+			(*iter).second.Load(mDevice);
+		++iter;
+	}
+}
+
+void scTextureManager::LoadAll()
+{
+	auto iter = mTextureList.begin();
+	while (iter != mTextureList.end())
+	{
+		(*iter).second.Load(mDevice);
+		++iter;
+	}
 }

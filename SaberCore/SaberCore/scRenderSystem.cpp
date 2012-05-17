@@ -143,8 +143,8 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 
 	// 初始化各种manager
 	mTextureManager.Initialize(mDevice);
-	mTextureManager.LoadTexture("../../res/texture/saber.jpg", "saber");
-	mTextureManager.GetTexture("saber");
+	//mTextureManager.CreateTexture("../../res/texture/saber.jpg", "saber");
+	//smTextureManager.GetTexture("saber");
 
 	return true;
 }
