@@ -36,7 +36,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>../../dxinclude/;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LibraryPath>../../dxlib/x86;$(LibraryPath)</LibraryPath>
+    <OutDir>../../bin/Debug</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -44,6 +50,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d11.lib;d3dx11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -61,6 +68,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="scArchiveLoader.cpp" />
+    <ClCompile Include="scMesh.cpp" />
+    <ClCompile Include="scMeshManager.cpp" />
+    <ClCompile Include="scRenderSystem.cpp" />
+    <ClCompile Include="scTextureManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="scArchiveLoader.h" />
+    <ClInclude Include="scError.h" />
+    <ClInclude Include="scMesh.h" />
+    <ClInclude Include="scMeshManager.h" />
+    <ClInclude Include="scRenderSystem.h" />
+    <ClInclude Include="scTextureManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

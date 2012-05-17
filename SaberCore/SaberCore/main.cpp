@@ -4,6 +4,8 @@
 #include <locale.h>
 using namespace std;
 
+#include "scRenderSystem.h"
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
@@ -44,8 +46,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmdLine,
 
 	RECT rc = {0, 0, 500, 500};
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+	int height = rc.bottom - rc.top;
+	int width = rc.right - rc.left;
 
-	HWND hwnd = CreateWindow(L"Kid's DX Test", L"Kid's DX Test", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hInstance, NULL);
+	HWND hwnd = CreateWindow(L"Kid's DX Test", L"Kid's DX Test", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, NULL, NULL, hInstance, NULL);
 
 	if (!hwnd)
 		return -1;
@@ -71,6 +75,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmdLine,
 	ShowWindow(hwnd, cmdShow);
 
 	//////////////////////////////////////////////////////////////////////////
+	scRenderSystem renderSystem;
+	renderSystem.Initialize(hwnd, width, height);
 	//////////////////////////////////////////////////////////////////////////
 
 	MSG msg = {0};
@@ -82,7 +88,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmdLine,
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+	//////////////////////////////////////////////////////////////////////////
+		renderSystem.RenderOneFrame();
+	//////////////////////////////////////////////////////////////////////////
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	renderSystem.Release();
+	//////////////////////////////////////////////////////////////////////////
 
 #ifdef SHOW_CONSOLE
 	/*---------------------------------------------------------------------------------*/
