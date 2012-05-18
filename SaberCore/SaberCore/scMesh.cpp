@@ -30,12 +30,12 @@ bool scMesh::LoadImpl( ID3D11Device* device )
 		return false;
 	}
 
-	int vertCount = objModel.GetTotalVerts();
-	scVertex* vertices = new scVertex[vertCount];
+	mVertexCount = objModel.GetTotalVerts();
+	scVertex* vertices = new scVertex[mVertexCount ];
 	float* vertsPtr = objModel.GetVertices();
 	float* texcPtr = objModel.GetTexCoords();
 
-	for (int i=0; i<vertCount; ++i)
+	for (int i=0; i<mVertexCount ; ++i)
 	{
 		vertices[i].position = XMFLOAT3(*(vertsPtr + 0), *(vertsPtr + 1), *(vertsPtr + 2));
 		vertsPtr += 3;
@@ -47,7 +47,7 @@ bool scMesh::LoadImpl( ID3D11Device* device )
 	ZeroMemory(&vertexDesc, sizeof(vertexDesc));
 	vertexDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexDesc.ByteWidth = sizeof(scVertex) * vertCount;
+	vertexDesc.ByteWidth = sizeof(scVertex) * mVertexCount ;
 
 	D3D11_SUBRESOURCE_DATA resourceData;
 	ZeroMemory(&resourceData, sizeof(resourceData));

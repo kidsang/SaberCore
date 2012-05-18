@@ -14,7 +14,7 @@ struct scVertex
 	XMFLOAT3 normal;			// 法线向量
 };
 
-const unsigned int scVertexStride = sizeof(scVertex);
+//const unsigned int scVertexStride = sizeof(scVertex);
 
 // 输入布局
 const D3D11_INPUT_ELEMENT_DESC scLayoutDesc[] =

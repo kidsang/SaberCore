@@ -202,11 +202,26 @@ void scRenderSystem::RenderOneFrame()
 void scRenderSystem::_Draw()
 {
 	mContext->IASetInputLayout(mInputLayout);
+
 	scMesh* mesh = mMeshManager.GetResourcePtr("basicshape");
-	ID3D11Buffer** buff = mesh->GetMeshBuffer();
-	//std::cout << mesh->GetMeshBuffer() << std::endl;
-	mContext->IASetVertexBuffers(0, 1, buff, &scVertexStride, 0);
-	//mContext->IASetVertexBuffers(0, 1, mesh->GetMeshBuffer(), &scVertexStride, 0);
+	ID3D11Buffer* buff = mesh->GetMeshBufferPtr();
+	unsigned int stride = sizeof(scVertex);
+	unsigned int offset = 0;
+	mContext->IASetVertexBuffers(0, 1, &buff, &stride, &offset);
+	mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	ID3DX11EffectTechnique* technique = mEffect->GetTechniqueByName("TestTechnique");
+	D3DX11_TECHNIQUE_DESC techDesc;
+	technique->GetDesc(&techDesc);
+	for (unsigned int i = 0; i < techDesc.Passes; i++)
+	{
+		ID3DX11EffectPass* pass = technique->GetPassByIndex(i);
+		if (i != 0)
+		{
+			pass->Apply(0, mContext);
+			mContext->Draw(mesh->GetVertexCount(), 0);
+		}
+	}
 }
 
 void scRenderSystem::Release()

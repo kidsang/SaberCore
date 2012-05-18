@@ -9,6 +9,7 @@ class scMesh : public scResource
 {
 private:
 	ID3D11Buffer* mMeshBuffer;
+	int mVertexCount;
 
 public:
 	scMesh(std::string name, std::string path, std::string group);
@@ -27,11 +28,16 @@ public:
 	}
 
 	// 返回顶点buffer
-	ID3D11Buffer** GetMeshBuffer()
+	ID3D11Buffer* GetMeshBufferPtr()
 	{
-		return &mMeshBuffer;
+		return mMeshBuffer;
 	}
 
+	// 返回网格的顶点个数
+	int GetVertexCount()
+	{
+		return mVertexCount;
+	}
 };
 
 
