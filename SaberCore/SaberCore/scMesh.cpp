@@ -34,6 +34,7 @@ bool scMesh::LoadImpl( ID3D11Device* device )
 	scVertex* vertices = new scVertex[mVertexCount ];
 	float* vertsPtr = objModel.GetVertices();
 	float* texcPtr = objModel.GetTexCoords();
+	float* normPtr = objModel.GetNormals();
 
 	for (int i=0; i<mVertexCount ; ++i)
 	{
@@ -41,6 +42,8 @@ bool scMesh::LoadImpl( ID3D11Device* device )
 		vertsPtr += 3;
 		vertices[i].texcoord = XMFLOAT2(*(texcPtr + 0), *(texcPtr + 1));
 		texcPtr += 2;
+		vertices[i].normal = XMFLOAT3( *(normPtr + 0), *(normPtr + 1), *(normPtr + 2) );
+		normPtr += 3;
 	}
 
 	D3D11_BUFFER_DESC vertexDesc;
@@ -61,6 +64,7 @@ bool scMesh::LoadImpl( ID3D11Device* device )
 	}
 
 	delete[] vertices;
+	objModel.Release();
 
 	return true;
 }

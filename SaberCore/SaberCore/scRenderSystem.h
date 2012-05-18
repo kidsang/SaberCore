@@ -30,6 +30,18 @@ private:
 	// ≤‚ ‘°£°£
 	ID3DX11Effect* mEffect;
 	ID3D11InputLayout* mInputLayout;
+	ID3D11VertexShader* lightVS_;
+	ID3D11PixelShader* lightPS_;
+
+	ID3D11InputLayout* inputLayout_;
+	ID3D11Buffer* vertexBuffer_;
+	int totalVerts_;
+
+	ID3D11Buffer* viewCB_;
+	ID3D11Buffer* projCB_;
+	ID3D11Buffer* worldCB_;
+	ID3D11Buffer* camPosCB_;
+	XMMATRIX projMatrix_;
 
 public:
 	scRenderSystem(void);

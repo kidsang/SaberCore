@@ -1,4 +1,5 @@
 #include "scRenderSystem.h"
+#include "objLoader.h"
 
 scRenderSystem::scRenderSystem(void)
 	: mHwnd(0),
@@ -145,43 +146,152 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	mMeshManager.Initialize(mDevice);
 
 	// ²âÊÔ¡£¡£¡£
-	ID3DBlob* buffer = 0;
-	
-	if (!CompileD3DShader("../../res/effect/test.fx", 0, "fx_5_0", &buffer))
+	ID3DBlob* vsBuffer = 0;
+
+	bool compileResult = CompileD3DShader( "../../res/effect/Lighting.fx", "VS_Main", "vs_4_0", &vsBuffer );
+
+	if( compileResult == false )
 	{
-		scErrMsg("!!!Compiling the effect shader failed.");
+		scErrMsg( "Error compiling the vertex shader!" );
 		return false;
 	}
 
-	hr = D3DX11CreateEffectFromMemory(buffer->GetBufferPointer(),
-		buffer->GetBufferSize(), 0, mDevice, &mEffect);
-	
-	if (FAILED(hr))
+	HRESULT d3dResult;
+
+	d3dResult = mDevice->CreateVertexShader( vsBuffer->GetBufferPointer( ),
+		vsBuffer->GetBufferSize( ), 0, &lightVS_ );
+
+	if( FAILED( d3dResult ) )
 	{
-		scErrMsg("Error creating the effect shader!");
-		if (buffer)
-			buffer->Release();
+		scErrMsg( "Error creating the vertex shader!" );
+
+		if( vsBuffer )
+			vsBuffer->Release( );
+
 		return false;
 	}
 
-	ID3DX11EffectTechnique* technique;
-	technique = mEffect->GetTechniqueByName("TestTechnique");
-	ID3DX11EffectPass* pass = technique->GetPassByIndex(0);
-
-	D3DX11_PASS_SHADER_DESC passDesc;
-	D3DX11_EFFECT_SHADER_DESC shaderDesc;
-	pass->GetVertexShaderDesc(&passDesc);
-	passDesc.pShaderVariable->GetShaderDesc(passDesc.ShaderIndex, &shaderDesc);
-
-	hr = mDevice->CreateInputLayout(scLayoutDesc, scLayoutCount, shaderDesc.pBytecode, shaderDesc.BytecodeLength, &mInputLayout);
-
-	buffer->Release();
-
-	if (FAILED(hr))
+	D3D11_INPUT_ELEMENT_DESC solidColorLayout[] =
 	{
-		scErrMsg("Error creating the input layout!");
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+
+	unsigned int totalLayoutElements = ARRAYSIZE( solidColorLayout );
+
+	d3dResult = mDevice->CreateInputLayout( solidColorLayout, totalLayoutElements,
+		vsBuffer->GetBufferPointer( ), vsBuffer->GetBufferSize( ), &inputLayout_ );
+
+	vsBuffer->Release( );
+
+	if( FAILED( d3dResult ) )
+	{
+		scErrMsg( "Error creating the input layout!" );
 		return false;
 	}
+
+	ID3DBlob* psBuffer = 0;
+
+	compileResult = CompileD3DShader( "../../res/effect/Lighting.fx", "PS_Main", "ps_4_0", &psBuffer );
+
+	if( compileResult == false )
+	{
+		scErrMsg( "Error compiling pixel shader!" );
+		return false;
+	}
+
+	d3dResult = mDevice->CreatePixelShader( psBuffer->GetBufferPointer( ),
+		psBuffer->GetBufferSize( ), 0, &lightPS_ );
+
+	psBuffer->Release( );
+
+	if( FAILED( d3dResult ) )
+	{
+		scErrMsg( "Error creating pixel shader!" );
+		return false;
+	}
+
+
+	// Load the models from the file.
+/*	ObjModel objModel;
+
+	if( objModel.LoadOBJ( "../../res/mesh/BasicShapes.obj" ) == false )
+	{
+		scErrMsg( "Error loading 3D model!" );
+		return false;
+	}
+
+	totalVerts_ = objModel.GetTotalVerts( );
+
+	scVertex* vertices = new scVertex[totalVerts_];
+	float* vertsPtr = objModel.GetVertices( );
+	float* texCPtr = objModel.GetTexCoords( );
+	float* normalPtr = objModel.GetNormals( );
+
+	for( int i = 0; i < totalVerts_; i++ )
+	{
+		vertices[i].position = XMFLOAT3( *(vertsPtr + 0), *(vertsPtr + 1), *(vertsPtr + 2) );
+		vertsPtr += 3;
+
+		vertices[i].texcoord = XMFLOAT2( *(texCPtr + 0), *(texCPtr + 1) );
+		texCPtr += 2;
+
+		vertices[i].normal = XMFLOAT3( *(normalPtr + 0), *(normalPtr + 1), *(normalPtr + 2) );
+		normalPtr += 3;
+	}
+
+	D3D11_BUFFER_DESC vertexDesc;
+	ZeroMemory( &vertexDesc, sizeof( vertexDesc ) );
+	vertexDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexDesc.ByteWidth = sizeof( scVertex ) * totalVerts_;
+
+	D3D11_SUBRESOURCE_DATA resourceData;
+	ZeroMemory( &resourceData, sizeof( resourceData ) );
+	resourceData.pSysMem = vertices;
+
+	d3dResult = mDevice->CreateBuffer( &vertexDesc, &resourceData, &vertexBuffer_ );
+
+	if( FAILED( d3dResult ) )
+	{
+		scErrMsg( "Failed to create vertex buffer!" );
+		return false;
+	}
+
+	delete[] vertices;
+	objModel.Release( );*/
+
+
+	D3D11_BUFFER_DESC constDesc;
+	ZeroMemory( &constDesc, sizeof( constDesc ) );
+	constDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	constDesc.ByteWidth = sizeof( XMMATRIX );
+	constDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	d3dResult = mDevice->CreateBuffer( &constDesc, 0, &viewCB_ );
+
+	if( FAILED( d3dResult ) )
+	{
+		return false;
+	}
+
+	d3dResult = mDevice->CreateBuffer( &constDesc, 0, &projCB_ );
+
+	if( FAILED( d3dResult ) )
+	{
+		return false;
+	}
+
+	d3dResult = mDevice->CreateBuffer( &constDesc, 0, &worldCB_ );
+
+	if( FAILED( d3dResult ) )
+	{
+		return false;
+	}
+
+	projMatrix_ = XMMatrixPerspectiveFovLH( XM_PIDIV4, 500.f / 500.0f, 0.01f, 1000.0f );
+	projMatrix_ = XMMatrixTranspose( projMatrix_ );
 
 	return true;
 }
@@ -201,7 +311,7 @@ void scRenderSystem::RenderOneFrame()
 
 void scRenderSystem::_Draw()
 {
-	mContext->IASetInputLayout(mInputLayout);
+	/*mContext->IASetInputLayout(mInputLayout);
 
 	scMesh* mesh = mMeshManager.GetResourcePtr("basicshape");
 	ID3D11Buffer* buff = mesh->GetMeshBufferPtr();
@@ -209,6 +319,7 @@ void scRenderSystem::_Draw()
 	unsigned int offset = 0;
 	mContext->IASetVertexBuffers(0, 1, &buff, &stride, &offset);
 	mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 
 	ID3DX11EffectTechnique* technique = mEffect->GetTechniqueByName("TestTechnique");
 	D3DX11_TECHNIQUE_DESC techDesc;
@@ -221,24 +332,36 @@ void scRenderSystem::_Draw()
 			pass->Apply(0, mContext);
 			mContext->Draw(mesh->GetVertexCount(), 0);
 		}
-	}
+	}*/
 
-	XMMATRIX worldMatrix = XMMatrixIdentity();
-	worldMatrix = XMMatrixTranspose(worldMatrix);
-	ID3DX11EffectMatrixVariable* worldMat = 0;
-	worldMat = mEffect->GetVariableByName("worldMatrix")->AsMatrix();
-	worldMat->SetMatrix((float*)&worldMatrix);
+    unsigned int stride = sizeof( scVertex );
+    unsigned int offset = 0;
 
-	XMMATRIX viewMatrix = XMMatrixLookAtLH(XMVectorSet(0, 0, 100, 1), XMVectorSet(0, 0, 0, 1), XMVectorSet(0, 1, 0, 1));
-	viewMatrix = XMMatrixTranspose(viewMatrix);
-	ID3DX11EffectMatrixVariable* viewMat = 0;
-	viewMat = mEffect->GetVariableByName("viewMatrix")->AsMatrix();
+    mContext->IASetInputLayout( inputLayout_ );
+	scMesh* mesh = mMeshManager.GetResourcePtr("basicshape");
+	ID3D11Buffer* buff = mesh->GetMeshBufferPtr();
+    mContext->IASetVertexBuffers( 0, 1, &buff, &stride, &offset );
+    mContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-	XMMATRIX projMatrix = XMMatrixPerspectiveFovLH(XM_PIDIV4, 1, 0.01f, 100.0f);
-	projMatrix = XMMatrixTranspose(projMatrix);
-	ID3DX11EffectMatrixVariable* projMat = 0;
-	projMat = mEffect->GetVariableByName("projMatrix")->AsMatrix();
-	projMat->SetMatrix((float*)&projMatrix);
+    mContext->VSSetShader( lightVS_, 0, 0 );
+    mContext->PSSetShader( lightPS_, 0, 0 );
+
+    XMMATRIX worldMat = XMMatrixIdentity( );
+    worldMat = XMMatrixTranspose( worldMat );
+
+    XMMATRIX viewMat = XMMatrixLookAtLH(XMVectorSet(0, 0, 50, 1), XMVectorSet(0, 0, 0, 1), XMVectorSet(0, 1, 0, 1));
+    viewMat = XMMatrixTranspose( viewMat );
+
+    mContext->UpdateSubresource( worldCB_, 0, 0, &worldMat, 0, 0 );
+    mContext->UpdateSubresource( viewCB_, 0, 0, &viewMat, 0, 0 );
+    mContext->UpdateSubresource( projCB_, 0, 0, &projMatrix_, 0, 0 );
+
+    mContext->VSSetConstantBuffers( 0, 1, &worldCB_ );
+    mContext->VSSetConstantBuffers( 1, 1, &viewCB_ );
+    mContext->VSSetConstantBuffers( 2, 1, &projCB_ );
+
+    mContext->Draw( mesh->GetVertexCount(), 0 );
+
 }
 
 void scRenderSystem::Release()
