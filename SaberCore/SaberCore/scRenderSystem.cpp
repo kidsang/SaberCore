@@ -222,6 +222,23 @@ void scRenderSystem::_Draw()
 			mContext->Draw(mesh->GetVertexCount(), 0);
 		}
 	}
+
+	XMMATRIX worldMatrix = XMMatrixIdentity();
+	worldMatrix = XMMatrixTranspose(worldMatrix);
+	ID3DX11EffectMatrixVariable* worldMat = 0;
+	worldMat = mEffect->GetVariableByName("worldMatrix")->AsMatrix();
+	worldMat->SetMatrix((float*)&worldMatrix);
+
+	XMMATRIX viewMatrix = XMMatrixLookAtLH(XMVectorSet(0, 0, 100, 1), XMVectorSet(0, 0, 0, 1), XMVectorSet(0, 1, 0, 1));
+	viewMatrix = XMMatrixTranspose(viewMatrix);
+	ID3DX11EffectMatrixVariable* viewMat = 0;
+	viewMat = mEffect->GetVariableByName("viewMatrix")->AsMatrix();
+
+	XMMATRIX projMatrix = XMMatrixPerspectiveFovLH(XM_PIDIV4, 1, 0.01f, 100.0f);
+	projMatrix = XMMatrixTranspose(projMatrix);
+	ID3DX11EffectMatrixVariable* projMat = 0;
+	projMat = mEffect->GetVariableByName("projMatrix")->AsMatrix();
+	projMat->SetMatrix((float*)&projMatrix);
 }
 
 void scRenderSystem::Release()
