@@ -47,10 +47,12 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d3dx11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3dcompiler.lib;Effects11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -68,26 +70,33 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="scArchiveLoader.cpp" />
     <ClCompile Include="scMesh.cpp" />
     <ClCompile Include="scMeshManager.cpp" />
     <ClCompile Include="scRenderSystem.cpp" />
     <ClCompile Include="scResource.cpp" />
+    <ClCompile Include="scResourceManager.cpp" />
     <ClCompile Include="scTexture.cpp" />
     <ClCompile Include="scTextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="objLoader.h" />
     <ClInclude Include="scArchiveLoader.h" />
     <ClInclude Include="scError.h" />
     <ClInclude Include="scMesh.h" />
     <ClInclude Include="scMeshManager.h" />
     <ClInclude Include="scRenderSystem.h" />
     <ClInclude Include="scResource.h" />
+    <ClInclude Include="scResourceManager.h" />
     <ClInclude Include="scTexture.h" />
     <ClInclude Include="scTextureManager.h" />
+    <ClInclude Include="scVertex.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\bin\Debug\texture.txt" />
+    <None Include="..\..\res\effect\test.fx" />
+    <None Include="..\..\res\mesh.txt" />
+    <None Include="..\..\res\texture.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

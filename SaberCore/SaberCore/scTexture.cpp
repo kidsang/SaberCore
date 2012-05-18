@@ -3,32 +3,29 @@
 
 scTexture::scTexture(std::string name, std::string path, std::string group)
 	: scResource(name, path, group),
-	mData(0)
+	mTextureBuffer(0)
 {
 }
 
 
 scTexture::~scTexture(void)
 {
-	// 释放纹理资源
-	if (mData)
-		mData->Release();
-	mData = 0;
+	Unload();
 }
 
-ID3D11ShaderResourceView* scTexture::GetDataPtr()
+ID3D11ShaderResourceView* scTexture::GetTextureDataPtr()
 {
-	return mData;
+	return mTextureBuffer;
 }
 
 bool scTexture::LoadImpl( ID3D11Device* device)
 {
 	// 确保不出现资源泄露
-	if (mData)
-		mData->Release();
+	if (mTextureBuffer)
+		mTextureBuffer->Release();
 
 	HRESULT hr;
-	hr = D3DX11CreateShaderResourceViewFromFileA(device, mPath.c_str(), 0, 0, &mData, 0);
+	hr = D3DX11CreateShaderResourceViewFromFileA(device, mPath.c_str(), 0, 0, &mTextureBuffer, 0);
 	if (FAILED(hr))
 	{
 		scErrMsg("!!!Fail to load texture: " + mPath);
@@ -38,9 +35,9 @@ bool scTexture::LoadImpl( ID3D11Device* device)
 	return true;
 }
 
-void scTexture::UnloadImpl( ID3D11Device* )
+void scTexture::UnloadImpl()
 {
-	if (mData)
-		mData->Release();
-	mData = 0;
+	if (mTextureBuffer)
+		mTextureBuffer->Release();
+	mTextureBuffer = 0;
 }

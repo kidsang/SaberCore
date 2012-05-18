@@ -1,6 +1,5 @@
 #include "scRenderSystem.h"
 
-
 scRenderSystem::scRenderSystem(void)
 	: mHwnd(0),
 	mDriverType(D3D_DRIVER_TYPE_NULL), mFeatureLevel(D3D_FEATURE_LEVEL_11_0),
@@ -143,8 +142,46 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 
 	// 初始化各种manager
 	mTextureManager.Initialize(mDevice);
-	//mTextureManager.CreateTexture("../../res/texture/saber.jpg", "saber");
-	//smTextureManager.GetTexture("saber");
+	mMeshManager.Initialize(mDevice);
+
+	// 测试。。。
+	ID3DBlob* buffer = 0;
+	
+	if (!CompileD3DShader("../../res/effect/test.fx", 0, "fx_5_0", &buffer))
+	{
+		scErrMsg("!!!Compiling the effect shader failed.");
+		return false;
+	}
+
+	hr = D3DX11CreateEffectFromMemory(buffer->GetBufferPointer(),
+		buffer->GetBufferSize(), 0, mDevice, &mEffect);
+	
+	if (FAILED(hr))
+	{
+		scErrMsg("Error creating the effect shader!");
+		if (buffer)
+			buffer->Release();
+		return false;
+	}
+
+	ID3DX11EffectTechnique* technique;
+	technique = mEffect->GetTechniqueByName("TestTechnique");
+	ID3DX11EffectPass* pass = technique->GetPassByIndex(0);
+
+	D3DX11_PASS_SHADER_DESC passDesc;
+	D3DX11_EFFECT_SHADER_DESC shaderDesc;
+	pass->GetVertexShaderDesc(&passDesc);
+	passDesc.pShaderVariable->GetShaderDesc(passDesc.ShaderIndex, &shaderDesc);
+
+	hr = mDevice->CreateInputLayout(scLayoutDesc, scLayoutCount, shaderDesc.pBytecode, shaderDesc.BytecodeLength, &mInputLayout);
+
+	buffer->Release();
+
+	if (FAILED(hr))
+	{
+		scErrMsg("Error creating the input layout!");
+		return false;
+	}
 
 	return true;
 }
@@ -164,8 +201,14 @@ void scRenderSystem::RenderOneFrame()
 
 void scRenderSystem::_Draw()
 {
-
+	mContext->IASetInputLayout(mInputLayout);
+	scMesh* mesh = mMeshManager.GetResourcePtr("basicshape");
+	ID3D11Buffer** buff = mesh->GetMeshBuffer();
+	//std::cout << mesh->GetMeshBuffer() << std::endl;
+	mContext->IASetVertexBuffers(0, 1, buff, &scVertexStride, 0);
+	//mContext->IASetVertexBuffers(0, 1, mesh->GetMeshBuffer(), &scVertexStride, 0);
 }
+
 void scRenderSystem::Release()
 {
 	if (mDepthBuffer)

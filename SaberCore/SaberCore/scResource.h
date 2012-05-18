@@ -21,11 +21,13 @@ public:
 	scResource(std::string name, std::string path, std::string group);
 	virtual ~scResource(void);
 
+	static std::string TypeString;
+
 	// 将资源装载至内存，并置资源状态为LS_LOADED
 	virtual void Load(ID3D11Device*);
 
 	// 将资源从内存卸载，并置资源状态为LS_UNLOADED
-	virtual void Unload(ID3D11Device*);
+	virtual void Unload();
 
 	// 返回资源是否已装载完成
 	bool IsLoaded()
@@ -51,12 +53,15 @@ public:
 		return mPath;
 	}
 
+	// 返回资源的类型
+	virtual const std::string GetType() = 0;
+
 protected:
 	// 装载资源的实现，必须被继承类所实现
 	virtual bool LoadImpl(ID3D11Device* device) = 0;
 
 	// 资源的实现，必须被继承类所实现
-	virtual void UnloadImpl(ID3D11Device* device) = 0;
+	virtual void UnloadImpl() = 0;
 
 };
 

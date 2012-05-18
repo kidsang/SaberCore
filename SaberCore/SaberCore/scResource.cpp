@@ -20,8 +20,8 @@ void scResource::Load(ID3D11Device* device)
 		mLoadingState = LS_LOADED;
 }
 
-void scResource::Unload(ID3D11Device* device)
+void scResource::Unload()
 {
-	UnloadImpl(device);
+	UnloadImpl();
 	mLoadingState = LS_UNLOADED;
 }

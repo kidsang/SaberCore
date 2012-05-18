@@ -1,0 +1,3 @@
+../../res/mesh/BasicShapes.obj:basicshape
+#../../res/mesh/BasicShapes.obj:basicshape
+#../../res/mesh/Basichapes.obj:ba
