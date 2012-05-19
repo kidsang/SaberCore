@@ -10,7 +10,7 @@ scTexture::scTexture(std::string name, std::string path, std::string group)
 
 scTexture::~scTexture(void)
 {
-	Unload();
+	UnloadImpl();
 }
 
 ID3D11ShaderResourceView* scTexture::GetTextureDataPtr()

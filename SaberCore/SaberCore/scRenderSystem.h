@@ -2,11 +2,9 @@
 #define scRenderSystemD11_h__
 
 #include <d3dx11.h>
-#include "scError.h"
-#include "scTextureManager.h"
-#include "scMeshManager.h"
-
 #include <D3Dcompiler.h>
+#include "scError.h"
+#include "scResourceManagerDef.h"
 
 class scRenderSystem
 {
@@ -23,16 +21,15 @@ private:
 	ID3D11RenderTargetView* mBackBuffer;
 	ID3D11DepthStencilView* mDepthBuffer;
 
-	scTextureManager mTextureManager;
-	scMeshManager mMeshManager;
-
-	// ≤‚ ‘°£°£
 	ID3D11InputLayout* mInputLayout;
 	ID3D11SamplerState* mSampler;
 
-	ID3D11VertexShader* lightVS_;
-	ID3D11PixelShader* lightPS_;
+	scTextureManager mTextureManager;
+	scMeshManager mMeshManager;
+	scVertexShaderManager mVertexShaderManager;
+	scPixelShaderManager mPixelShaderManager;
 
+	// ≤‚ ‘°£°£
 	ID3D11Buffer* viewCB_;
 	ID3D11Buffer* projCB_;
 	ID3D11Buffer* worldCB_;

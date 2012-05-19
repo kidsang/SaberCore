@@ -73,30 +73,33 @@
     <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="scArchiveLoader.cpp" />
     <ClCompile Include="scMesh.cpp" />
-    <ClCompile Include="scMeshManager.cpp" />
+    <ClCompile Include="scPixelShader.cpp" />
     <ClCompile Include="scRenderSystem.cpp" />
     <ClCompile Include="scResource.cpp" />
     <ClCompile Include="scResourceManager.cpp" />
     <ClCompile Include="scTexture.cpp" />
-    <ClCompile Include="scTextureManager.cpp" />
+    <ClCompile Include="scVertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="objLoader.h" />
     <ClInclude Include="scArchiveLoader.h" />
     <ClInclude Include="scError.h" />
     <ClInclude Include="scMesh.h" />
-    <ClInclude Include="scMeshManager.h" />
+    <ClInclude Include="scPixelShader.h" />
     <ClInclude Include="scRenderSystem.h" />
     <ClInclude Include="scResource.h" />
     <ClInclude Include="scResourceManager.h" />
+    <ClInclude Include="scResourceManagerDef.h" />
+    <ClInclude Include="scShader.h" />
     <ClInclude Include="scTexture.h" />
-    <ClInclude Include="scTextureManager.h" />
     <ClInclude Include="scVertex.h" />
+    <ClInclude Include="scVertexShader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\res\effect\test.fx" />
     <None Include="..\..\res\mesh.txt" />
     <None Include="..\..\res\texture.txt" />
+    <None Include="..\..\res\vshader.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

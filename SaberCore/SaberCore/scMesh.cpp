@@ -11,7 +11,7 @@ scMesh::scMesh(std::string name, std::string path, std::string group)
 
 scMesh::~scMesh(void)
 {
-	Unload();
+	UnloadImpl();
 }
 
 bool scMesh::LoadImpl( ID3D11Device* device )

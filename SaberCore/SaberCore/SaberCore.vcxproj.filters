@@ -24,13 +24,7 @@
     <ClCompile Include="scRenderSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="scMeshManager.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="scMesh.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="scTextureManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="scArchiveLoader.cpp">
@@ -48,6 +42,12 @@
     <ClCompile Include="scResourceManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="scVertexShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="scPixelShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scRenderSystem.h">
@@ -56,13 +56,7 @@
     <ClInclude Include="scError.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="scMeshManager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="scMesh.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="scTextureManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="scArchiveLoader.h">
@@ -83,10 +77,23 @@
     <ClInclude Include="scResourceManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="scResourceManagerDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="scVertexShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="scShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="scPixelShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\res\texture.txt" />
     <None Include="..\..\res\mesh.txt" />
     <None Include="..\..\res\effect\test.fx" />
+    <None Include="..\..\res\vshader.txt" />
   </ItemGroup>
 </Project>

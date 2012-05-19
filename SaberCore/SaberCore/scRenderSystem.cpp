@@ -1,11 +1,11 @@
 #include "scRenderSystem.h"
-#include "objLoader.h"
 
 scRenderSystem::scRenderSystem(void)
 	: mHwnd(0),
 	mDriverType(D3D_DRIVER_TYPE_NULL), mFeatureLevel(D3D_FEATURE_LEVEL_11_0),
 	mDevice(0), mContext(0), mSwapChain(0),
-	mBackBuffer(0), mDepthBuffer(0)
+	mBackBuffer(0), mDepthBuffer(0),
+	mInputLayout(0), mSampler(0)
 {
 
 }
@@ -143,66 +143,26 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 
 	// 初始化各种manager
 	mTextureManager.Initialize(mDevice);
+	mTextureManager.LoadArchive("../../res/texture.txt");
+	mTextureManager.LoadAll();
 	mMeshManager.Initialize(mDevice);
 	mMeshManager.LoadArchive("../../res/mesh.txt");
 	mMeshManager.LoadAll();
+	mVertexShaderManager.Initialize(mDevice);
+	mVertexShaderManager.LoadArchive("../../res/vshader.txt");
+	mVertexShaderManager.LoadAll();
+	mPixelShaderManager.Initialize(mDevice);
+	mPixelShaderManager.LoadArchive("../../res/vshader.txt");
+	mPixelShaderManager.LoadAll();
 
-	// 测试。。。
-	ID3DBlob* vsBuffer = 0;
-
-	bool compileResult = CompileD3DShader( "../../res/effect/Lighting.fx", "VS_Main", "vs_4_0", &vsBuffer );
-
-	if( compileResult == false )
-	{
-		scErrMsg( "Error compiling the vertex shader!" );
-		return false;
-	}
-
-	HRESULT d3dResult;
-
-	d3dResult = mDevice->CreateVertexShader( vsBuffer->GetBufferPointer( ),
-		vsBuffer->GetBufferSize( ), 0, &lightVS_ );
-
-	if( FAILED( d3dResult ) )
-	{
-		scErrMsg( "Error creating the vertex shader!" );
-
-		if( vsBuffer )
-			vsBuffer->Release( );
-
-		return false;
-	}
-
-
-	d3dResult = mDevice->CreateInputLayout( scLayoutDesc, scLayoutCount,
+	// 创建 input layout
+	ID3DBlob* vsBuffer = mVertexShaderManager.GetResourcePtr("light")->GetBufferPtr();
+	hr = mDevice->CreateInputLayout( scLayoutDesc, scLayoutCount,
 		vsBuffer->GetBufferPointer( ), vsBuffer->GetBufferSize( ), &mInputLayout );
 
-	vsBuffer->Release( );
-
-	if( FAILED( d3dResult ) )
+	if (FAILED(hr)) 
 	{
-		scErrMsg( "Error creating the input layout!" );
-		return false;
-	}
-
-	ID3DBlob* psBuffer = 0;
-
-	compileResult = CompileD3DShader( "../../res/effect/Lighting.fx", "PS_Main", "ps_4_0", &psBuffer );
-
-	if( compileResult == false )
-	{
-		scErrMsg( "Error compiling pixel shader!" );
-		return false;
-	}
-
-	d3dResult = mDevice->CreatePixelShader( psBuffer->GetBufferPointer( ),
-		psBuffer->GetBufferSize( ), 0, &lightPS_ );
-
-	psBuffer->Release( );
-
-	if( FAILED( d3dResult ) )
-	{
-		scErrMsg( "Error creating pixel shader!" );
+		scErrMsg("!!!Error creating input layout!");
 		return false;
 	}
 
@@ -223,6 +183,8 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 		return false;
 	}
 
+
+	// 测试。。。
 	// const buffers
 	D3D11_BUFFER_DESC constDesc;
 	ZeroMemory( &constDesc, sizeof( constDesc ) );
@@ -230,23 +192,23 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	constDesc.ByteWidth = sizeof( XMMATRIX );
 	constDesc.Usage = D3D11_USAGE_DEFAULT;
 
-	d3dResult = mDevice->CreateBuffer( &constDesc, 0, &viewCB_ );
+	hr = mDevice->CreateBuffer( &constDesc, 0, &viewCB_ );
 
-	if( FAILED( d3dResult ) )
+	if( FAILED( hr ) )
 	{
 		return false;
 	}
 
-	d3dResult = mDevice->CreateBuffer( &constDesc, 0, &projCB_ );
+	hr = mDevice->CreateBuffer( &constDesc, 0, &projCB_ );
 
-	if( FAILED( d3dResult ) )
+	if( FAILED( hr ) )
 	{
 		return false;
 	}
 
-	d3dResult = mDevice->CreateBuffer( &constDesc, 0, &worldCB_ );
+	hr = mDevice->CreateBuffer( &constDesc, 0, &worldCB_ );
 
-	if( FAILED( d3dResult ) )
+	if( FAILED( hr ) )
 	{
 		return false;
 	}
@@ -278,8 +240,10 @@ void scRenderSystem::_Draw()
     mContext->IASetVertexBuffers( 0, 1, &buff, &stride, &offset );
     mContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-    mContext->VSSetShader( lightVS_, 0, 0 );
-    mContext->PSSetShader( lightPS_, 0, 0 );
+	ID3D11VertexShader* vs = mVertexShaderManager.GetResourcePtr("light")->GetShaderDataPtr();
+    mContext->VSSetShader(vs, 0, 0 );
+	ID3D11PixelShader* ps = mPixelShaderManager.GetResourcePtr("light")->GetShaderDataPtr();
+    mContext->PSSetShader( ps, 0, 0 );
 	scTexture* mtext = mTextureManager.GetResourcePtr("saber");
 	ID3D11ShaderResourceView* tex = mtext->GetTextureDataPtr();
 	mContext->PSSetShaderResources(0, 1, &tex);
@@ -308,6 +272,10 @@ void scRenderSystem::_Draw()
 
 void scRenderSystem::Release()
 {
+	if (mSampler)
+		mSampler->Release();
+	if (mInputLayout)
+		mInputLayout->Release();
 	if (mDepthBuffer)
 		mDepthBuffer->Release();
 	if (mBackBuffer)
@@ -319,6 +287,8 @@ void scRenderSystem::Release()
 	if (mDevice)
 		mDevice->Release();
 
+	mSampler = 0;
+	mInputLayout = 0;
 	mDepthBuffer = 0;
 	mBackBuffer = 0;
 	mSwapChain = 0;
