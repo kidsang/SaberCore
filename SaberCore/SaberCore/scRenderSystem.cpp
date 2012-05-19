@@ -173,17 +173,9 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 		return false;
 	}
 
-	D3D11_INPUT_ELEMENT_DESC solidColorLayout[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
 
-	unsigned int totalLayoutElements = ARRAYSIZE( solidColorLayout );
-
-	d3dResult = mDevice->CreateInputLayout( solidColorLayout, totalLayoutElements,
-		vsBuffer->GetBufferPointer( ), vsBuffer->GetBufferSize( ), &inputLayout_ );
+	d3dResult = mDevice->CreateInputLayout( scLayoutDesc, scLayoutCount,
+		vsBuffer->GetBufferPointer( ), vsBuffer->GetBufferSize( ), &mInputLayout );
 
 	vsBuffer->Release( );
 
@@ -231,56 +223,7 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 		return false;
 	}
 
-	// Load the models from the file.
-/*	ObjModel objModel;
-
-	if( objModel.LoadOBJ( "../../res/mesh/BasicShapes.obj" ) == false )
-	{
-		scErrMsg( "Error loading 3D model!" );
-		return false;
-	}
-
-	totalVerts_ = objModel.GetTotalVerts( );
-
-	scVertex* vertices = new scVertex[totalVerts_];
-	float* vertsPtr = objModel.GetVertices( );
-	float* texCPtr = objModel.GetTexCoords( );
-	float* normalPtr = objModel.GetNormals( );
-
-	for( int i = 0; i < totalVerts_; i++ )
-	{
-		vertices[i].position = XMFLOAT3( *(vertsPtr + 0), *(vertsPtr + 1), *(vertsPtr + 2) );
-		vertsPtr += 3;
-
-		vertices[i].texcoord = XMFLOAT2( *(texCPtr + 0), *(texCPtr + 1) );
-		texCPtr += 2;
-
-		vertices[i].normal = XMFLOAT3( *(normalPtr + 0), *(normalPtr + 1), *(normalPtr + 2) );
-		normalPtr += 3;
-	}
-
-	D3D11_BUFFER_DESC vertexDesc;
-	ZeroMemory( &vertexDesc, sizeof( vertexDesc ) );
-	vertexDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexDesc.ByteWidth = sizeof( scVertex ) * totalVerts_;
-
-	D3D11_SUBRESOURCE_DATA resourceData;
-	ZeroMemory( &resourceData, sizeof( resourceData ) );
-	resourceData.pSysMem = vertices;
-
-	d3dResult = mDevice->CreateBuffer( &vertexDesc, &resourceData, &vertexBuffer_ );
-
-	if( FAILED( d3dResult ) )
-	{
-		scErrMsg( "Failed to create vertex buffer!" );
-		return false;
-	}
-
-	delete[] vertices;
-	objModel.Release( );*/
-
-
+	// const buffers
 	D3D11_BUFFER_DESC constDesc;
 	ZeroMemory( &constDesc, sizeof( constDesc ) );
 	constDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -308,9 +251,6 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 		return false;
 	}
 
-	projMatrix_ = XMMatrixPerspectiveFovLH( XM_PIDIV4, 500.f / 500.0f, 0.01f, 1000.0f );
-	projMatrix_ = XMMatrixTranspose( projMatrix_ );
-
 	return true;
 }
 
@@ -329,33 +269,10 @@ void scRenderSystem::RenderOneFrame()
 
 void scRenderSystem::_Draw()
 {
-	/*mContext->IASetInputLayout(mInputLayout);
-
-	scMesh* mesh = mMeshManager.GetResourcePtr("basicshape");
-	ID3D11Buffer* buff = mesh->GetMeshBufferPtr();
-	unsigned int stride = sizeof(scVertex);
-	unsigned int offset = 0;
-	mContext->IASetVertexBuffers(0, 1, &buff, &stride, &offset);
-	mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-
-	ID3DX11EffectTechnique* technique = mEffect->GetTechniqueByName("TestTechnique");
-	D3DX11_TECHNIQUE_DESC techDesc;
-	technique->GetDesc(&techDesc);
-	for (unsigned int i = 0; i < techDesc.Passes; i++)
-	{
-		ID3DX11EffectPass* pass = technique->GetPassByIndex(i);
-		if (i != 0)
-		{
-			pass->Apply(0, mContext);
-			mContext->Draw(mesh->GetVertexCount(), 0);
-		}
-	}*/
-
     unsigned int stride = sizeof( scVertex );
     unsigned int offset = 0;
 
-    mContext->IASetInputLayout( inputLayout_ );
+    mContext->IASetInputLayout( mInputLayout );
 	scMesh* mesh = mMeshManager.GetResourcePtr("basicshape");
 	ID3D11Buffer* buff = mesh->GetMeshBufferPtr();
     mContext->IASetVertexBuffers( 0, 1, &buff, &stride, &offset );
@@ -374,9 +291,12 @@ void scRenderSystem::_Draw()
     XMMATRIX viewMat = XMMatrixLookAtLH(XMVectorSet(0, 0, 50, 1), XMVectorSet(0, 0, 0, 1), XMVectorSet(0, 1, 0, 1));
     viewMat = XMMatrixTranspose( viewMat );
 
+	XMMATRIX projMat = XMMatrixPerspectiveFovLH( XM_PIDIV4, 500.f / 500.0f, 0.01f, 1000.0f );
+	projMat = XMMatrixTranspose( projMat );
+
     mContext->UpdateSubresource( worldCB_, 0, 0, &worldMat, 0, 0 );
     mContext->UpdateSubresource( viewCB_, 0, 0, &viewMat, 0, 0 );
-    mContext->UpdateSubresource( projCB_, 0, 0, &projMatrix_, 0, 0 );
+    mContext->UpdateSubresource( projCB_, 0, 0, &projMat, 0, 0 );
 
     mContext->VSSetConstantBuffers( 0, 1, &worldCB_ );
     mContext->VSSetConstantBuffers( 1, 1, &viewCB_ );
