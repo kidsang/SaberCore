@@ -45,6 +45,9 @@ public:
 	virtual ResourceType* GetResourcePtr(const std::string& name);
 };
 
+/*----------------------------------------------------------------------------*/
+// scResourceManager.cpp
+
 template <typename ResourceType>
 scResourceManager<ResourceType>::scResourceManager(void)
 {

@@ -30,6 +30,8 @@ private:
 	// ≤‚ ‘°£°£
 	ID3DX11Effect* mEffect;
 	ID3D11InputLayout* mInputLayout;
+	ID3D11SamplerState* mSampler;
+
 	ID3D11VertexShader* lightVS_;
 	ID3D11PixelShader* lightPS_;
 

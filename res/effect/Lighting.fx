@@ -89,5 +89,6 @@ float4 PS_Main( PS_Input frag ) : SV_TARGET
 
     float3 finalColor = ambientColor + lightColor * diffuseTerm + lightColor * specularTerm;
 
-    return float4( finalColor, 1.0f );
+	return colorMap.Sample( colorSampler, frag.tex0 ) * float4(finalColor, 1.0f);
+    //return float4( finalColor, 1.0f );
 }

@@ -144,6 +144,8 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	// 初始化各种manager
 	mTextureManager.Initialize(mDevice);
 	mMeshManager.Initialize(mDevice);
+	mMeshManager.LoadArchive("../../res/mesh.txt");
+	mMeshManager.LoadAll();
 
 	// 测试。。。
 	ID3DBlob* vsBuffer = 0;
@@ -212,6 +214,22 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 		return false;
 	}
 
+	// sampler
+	D3D11_SAMPLER_DESC samplerDesc;
+	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	hr = mDevice->CreateSamplerState(&samplerDesc, &mSampler);
+	if (FAILED(hr))
+	{
+		scErrMsg("Faileed to create color map sampler state!");
+		return false;
+	}
 
 	// Load the models from the file.
 /*	ObjModel objModel;
@@ -345,6 +363,10 @@ void scRenderSystem::_Draw()
 
     mContext->VSSetShader( lightVS_, 0, 0 );
     mContext->PSSetShader( lightPS_, 0, 0 );
+	scTexture* mtext = mTextureManager.GetResourcePtr("saber");
+	ID3D11ShaderResourceView* tex = mtext->GetTextureDataPtr();
+	mContext->PSSetShaderResources(0, 1, &tex);
+	mContext->PSSetSamplers(0, 1, &mSampler);
 
     XMMATRIX worldMat = XMMatrixIdentity( );
     worldMat = XMMatrixTranspose( worldMat );
