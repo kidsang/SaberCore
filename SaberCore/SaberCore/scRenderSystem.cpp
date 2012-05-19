@@ -5,7 +5,7 @@ scRenderSystem::scRenderSystem(void)
 	mDriverType(D3D_DRIVER_TYPE_NULL), mFeatureLevel(D3D_FEATURE_LEVEL_11_0),
 	mDevice(0), mContext(0), mSwapChain(0),
 	mBackBuffer(0), mDepthBuffer(0),
-	mInputLayout(0), mSampler(0)
+	mSampler(0)
 {
 
 }
@@ -155,17 +155,6 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	mPixelShaderManager.LoadArchive("../../res/vshader.txt");
 	mPixelShaderManager.LoadAll();
 
-	// ´´½¨ input layout
-	ID3DBlob* vsBuffer = mVertexShaderManager.GetResourcePtr("light")->GetBufferPtr();
-	hr = mDevice->CreateInputLayout( scLayoutDesc, scLayoutCount,
-		vsBuffer->GetBufferPointer( ), vsBuffer->GetBufferSize( ), &mInputLayout );
-
-	if (FAILED(hr)) 
-	{
-		scErrMsg("!!!Error creating input layout!");
-		return false;
-	}
-
 	// sampler
 	D3D11_SAMPLER_DESC samplerDesc;
 	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
@@ -234,7 +223,8 @@ void scRenderSystem::_Draw()
     unsigned int stride = sizeof( scVertex );
     unsigned int offset = 0;
 
-    mContext->IASetInputLayout( mInputLayout );
+
+    mContext->IASetInputLayout(mVertexShaderManager.GetResourcePtr("light")->GetInputLayout());
 	scMesh* mesh = mMeshManager.GetResourcePtr("basicshape");
 	ID3D11Buffer* buff = mesh->GetMeshBufferPtr();
     mContext->IASetVertexBuffers( 0, 1, &buff, &stride, &offset );
@@ -274,8 +264,6 @@ void scRenderSystem::Release()
 {
 	if (mSampler)
 		mSampler->Release();
-	if (mInputLayout)
-		mInputLayout->Release();
 	if (mDepthBuffer)
 		mDepthBuffer->Release();
 	if (mBackBuffer)
@@ -288,7 +276,6 @@ void scRenderSystem::Release()
 		mDevice->Release();
 
 	mSampler = 0;
-	mInputLayout = 0;
 	mDepthBuffer = 0;
 	mBackBuffer = 0;
 	mSwapChain = 0;

@@ -21,7 +21,6 @@ private:
 	ID3D11RenderTargetView* mBackBuffer;
 	ID3D11DepthStencilView* mDepthBuffer;
 
-	ID3D11InputLayout* mInputLayout;
 	ID3D11SamplerState* mSampler;
 
 	scTextureManager mTextureManager;

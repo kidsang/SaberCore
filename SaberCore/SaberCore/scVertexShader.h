@@ -8,7 +8,7 @@ class scVertexShader : public scShader
 {
 private:
 	ID3D11VertexShader* mVertexShader;
-	ID3DBlob* mBuffer;
+	ID3D11InputLayout* mInputLayout;
 
 public:
 	scVertexShader(std::string name, std::string path, std::string group);
@@ -32,10 +32,9 @@ public:
 		return mVertexShader;
 	}
 
-	// ªÒ»°Shader buffer
-	ID3DBlob* GetBufferPtr()
+	ID3D11InputLayout* GetInputLayout()
 	{
-		return mBuffer;
+		return mInputLayout;
 	}
 
 };

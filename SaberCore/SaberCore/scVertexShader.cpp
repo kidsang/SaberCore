@@ -1,9 +1,10 @@
 #include "scVertexShader.h"
+#include "scVertex.h"
 
 
 scVertexShader::scVertexShader(std::string name, std::string path, std::string group)
 	: scShader(name, path, group),
-	mBuffer(0), mVertexShader(0)
+	 mVertexShader(0), mInputLayout(0)
 {
 	SetEntry("VS_Main");
 	SetShaderModel("vs_5_0");
@@ -21,17 +22,31 @@ bool scVertexShader::LoadImpl( ID3D11Device* device )
 	if (mVertexShader)
 		mVertexShader->Release();
 
-	if (!Compile(&mBuffer))
-		return false;
+	ID3DBlob* buffer;
 
-	HRESULT hr = device->CreateVertexShader(mBuffer->GetBufferPointer(), mBuffer->GetBufferSize(), 0, &mVertexShader);
+	if (!Compile(&buffer))
+		return false;
+	
+	// ´´½¨input layout
+	HRESULT hr;
+	hr = device->CreateInputLayout( scLayoutDesc, scLayoutCount,
+		buffer->GetBufferPointer( ), buffer->GetBufferSize( ), &mInputLayout );
+	if (FAILED(hr)) 
+	{
+		scErrMsg("!!!Error creating input layout of shader " + mName);
+		return false;
+	}
+
+	hr = device->CreateVertexShader(buffer->GetBufferPointer(), buffer->GetBufferSize(), 0, &mVertexShader);
 	if (FAILED(hr))
 	{
-		if (mBuffer)
-			mBuffer->Release();
+		if (buffer)
+			buffer->Release();
 		scErrMsg("!!!Error creating vertex shader.");
 		return false;
 	}
+
+	buffer->Release();
 
 	return true;
 }
@@ -40,9 +55,9 @@ void scVertexShader::UnloadImpl()
 {
 	if (mVertexShader)
 		mVertexShader->Release();
-	if (mBuffer)
-		mBuffer->Release();
+	if (mInputLayout)
+		mInputLayout->Release();
 
+	mInputLayout = 0;
 	mVertexShader = 0;
-	mBuffer = 0;
 }
