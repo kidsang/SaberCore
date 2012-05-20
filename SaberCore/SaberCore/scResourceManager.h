@@ -2,7 +2,7 @@
 #define scResourceManager_h__
 
 #include <d3dx11.h>
-#include <map>
+#include <hash_map>
 #include "scError.h"
 #include "scArchiveLoader.h"
 #include "scResource.h"
@@ -12,7 +12,7 @@
 template <typename ResourceType>
 class scResourceManager
 {
-typedef std::map<std::string, ResourceType> ResourceMap;
+typedef std::hash_map<std::string, ResourceType> ResourceMap;
 
 protected:
 	ResourceMap mResourceMap;

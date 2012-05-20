@@ -48,6 +48,15 @@
     <ClCompile Include="scPixelShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="scRenderable.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="scSceneNode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="scSceneManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scRenderSystem.h">
@@ -87,6 +96,18 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="scPixelShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="scRenderable.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="scSceneNode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="scSceneManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
