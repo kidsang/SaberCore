@@ -104,9 +104,6 @@
     <ClInclude Include="scSceneNode.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="scSceneManager.h">
       <Filter>头文件</Filter>
     </ClInclude>

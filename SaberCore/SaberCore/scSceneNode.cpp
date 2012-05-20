@@ -105,6 +105,9 @@ void scSceneNode::UpdateFromParent()
 
 void scSceneNode::UpdateInherited()
 {
+	if (!mNeedUpdate)
+		return;
+
 	scSceneNode* updateRoot = this;
 	std::vector<scSceneNode*> updateStack;
 	updateStack.push_back(this);

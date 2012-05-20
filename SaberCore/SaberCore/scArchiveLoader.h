@@ -1,17 +1,25 @@
 #ifndef scArchiveLoader_h__
 #define scArchiveLoader_h__
 
+/**
+ * 文件：scArchiveLoader
+ * 日期：2012/05/20
+ * 作者：kid
+ */
+
 #include "scError.h"
 #include <vector>
 #include <stdio.h>
 
-// 从文件中读取资源的路径信息
-// 文件格式如下
-// [group]
-// path:name
+/// 从文件中读取资源的路径信息
+/// 文件格式如下
+/// [group]
+/// path:name
 class scArchiveLoader
 {
-	// 项
+	/// 项
+	/// 从配置文件中读入的条目
+	/// 其中包含了资源名，资源路径和资源分组
 	struct Entry
 	{
 		std::string name;
@@ -28,65 +36,13 @@ class scArchiveLoader
 	typedef std::vector<Entry> EntryList;
 
 public:
+	/// 读取到的条目列表
 	EntryList mEntryList;
 
-	bool Load(const std::string& filepath)
-	{
-		std::string group = "default";
-		mEntryList.clear();
-
-		FILE* file = fopen(filepath.c_str(), "r");
-		if (!file)
-		{
-			scErrMsg("Can not open file: " + filepath);
-			return false;
-		}
-
-		std::string s;
-		char buf[256];
-
-		while(fgets(buf, sizeof(buf), file))
-		{
-			s = std::string(buf);
-			int len = s.size();
-			if (s.empty())
-				continue;
-			
-			// 我知道下面这段写得很丑
-			// 但是我不想为了使用正则表达式而导入boost库
-
-			// 以[]框住的是组信息
-			if (s.find("#") != -1)
-			{
-				// 注释行
-				continue;
-			}
-			else if (s.find("[") != -1)
-			{
-				if (s.find("]") != -1)
-				{
-					// 设定当前组
-					int beg = s.find("[") + 1;
-					int end = s.find("]");
-					group =  s.substr(beg, end - beg); 
-				}
-			}
-			else if (s.find(":") != -1)
-			{
-				// path:name
-				int pivot = s.find(':');
-				int end = s.find('\n');
-				if (end >= 0)
-					end -= 1;
-				std::string path = s.substr(0, pivot);
-				std::string name = s.substr(pivot + 1, end - pivot);//去除换行符
-				mEntryList.push_back(Entry(name, path, group));
-			}
-		}
-
-		fclose(file);
-		return true;
-	}
+	/// 从指定路径读取资源的路径条目
+	/// @param filepath 配置文件所在路径
+	/// @return 读取是否成功
+	bool Load(const std::string& filepath);
 };
 
 #endif // scArchiveLoader_h__

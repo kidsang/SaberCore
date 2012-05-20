@@ -10,6 +10,7 @@
 #define _OBJ_LOADER_H_
 
 
+/// ~¡£~
 class TokenStream
 {
 public:
@@ -26,6 +27,7 @@ private:
 	std::string data_;
 };
 
+/// ~¡£~
 class ObjModel
 {
    public:
