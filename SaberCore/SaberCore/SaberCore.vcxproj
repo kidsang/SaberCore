@@ -80,6 +80,7 @@
     <ClCompile Include="scResourceManager.cpp" />
     <ClCompile Include="scSceneManager.cpp" />
     <ClCompile Include="scSceneNode.cpp" />
+    <ClCompile Include="scShader.cpp" />
     <ClCompile Include="scTexture.cpp" />
     <ClCompile Include="scVertexShader.cpp" />
   </ItemGroup>
@@ -102,6 +103,7 @@
     <ClInclude Include="scVertexShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\res\effect\Lighting.fx" />
     <None Include="..\..\res\effect\test.fx" />
     <None Include="..\..\res\mesh.txt" />
     <None Include="..\..\res\texture.txt" />

@@ -14,6 +14,10 @@
 /// shader资源的抽象类
 class scShader : public scResource
 {
+public:
+	/// 默认版本的shader
+	static const char* defaultShaderSrc;
+
 private:
 	/// shader的函数入口名
 	std::string mEntry;
@@ -61,39 +65,20 @@ public:
 	virtual bool LoadImpl( ID3D11Device* device ) = 0;
 
 	/// 由子类实现
+	/// 创建默认的Shader
+	/// 默认的shader提供基础的光照和纹理映射
+	virtual bool CreateDefaultShader(ID3D11Device* device) = 0;
+
+	/// 由子类实现
 	/// @see scResource::UnloadImpl()
 	virtual void UnloadImpl() = 0;
 
 protected:
 	/// 编译shader的工具函数
-	bool Compile(ID3DBlob** buffer)
-	{
-		DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+	bool Compile(ID3DBlob** buffer);
 
-		ID3DBlob* errorBuffer = 0;
-		HRESULT result;
-
-		result = D3DX11CompileFromFileA(mPath.c_str(), 0, 0, mEntry.c_str(), mShaderModel.c_str(),
-			shaderFlags, 0, 0, buffer, &errorBuffer, 0 );
-
-		if( FAILED( result ) )
-		{
-			if( errorBuffer != 0 )
-			{
-				scErrMsg( ( char* )errorBuffer->GetBufferPointer( ) );
-				errorBuffer->Release( );
-			}
-			return false;
-		}
-
-		if( errorBuffer != 0 )
-		{
-			scErrMsg( ( char* )errorBuffer->GetBufferPointer( ) );
-			errorBuffer->Release( );
-		}
-
-		return true;
-	}
+	/// 编译shader的工具函数
+	bool CompileFromMemory(ID3DBlob** buffer, const char* shaderSrc);
 };
 
 #endif // scShader_h__

@@ -36,6 +36,9 @@ public:
 	/// 卸载pixel shader的实现
 	virtual void UnloadImpl();
 
+	/// 创建默认shader的实现
+	virtual bool CreateDefaultShader(ID3D11Device* device);
+
 	/// 获取顶点Shader
 	ID3D11VertexShader* GetShaderDataPtr()
 	{

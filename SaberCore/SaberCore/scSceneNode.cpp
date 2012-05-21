@@ -12,7 +12,7 @@ scSceneNode::scSceneNode(scSceneManager* creator, std::string name, scSceneNode*
 
 	// root节点没有父亲
 	if (parent)
-		parent->AddChild(this);
+		parent->_AddChild(this);
 }
 
 
@@ -20,7 +20,7 @@ scSceneNode::~scSceneNode(void)
 {
 }
 
-void scSceneNode::NotifySelfAndChildren()
+void scSceneNode::_NotifySelfAndChildren()
 {
 	mNeedUpdate = true;
 	for (auto iter = mChildren.begin(); iter != mChildren.end(); ++iter)
@@ -30,11 +30,11 @@ void scSceneNode::NotifySelfAndChildren()
 		if ((*iter)->IsNeedUpdate())
 			continue;
 
-		(*iter)->NotifySelfAndChildren();
+		(*iter)->_NotifySelfAndChildren();
 	}
 }
 
-void scSceneNode::AddChild( scSceneNode* node )
+void scSceneNode::_AddChild( scSceneNode* node )
 {
 	// 确保每个节点仅有一个父节点
 	if (node->GetParent() && node->GetParent()->HasChild(node)) 
@@ -49,12 +49,12 @@ void scSceneNode::AddChild( scSceneNode* node )
 
 	// 因为该子节点变更了父节点
 	// 因此该子节点需要重新计算自己的缓存
-	node->NotifySelfAndChildren();
+	node->_NotifySelfAndChildren();
 
 	mChildren.push_back(node);
 }
 
-scSceneNode* scSceneNode::RemoveChild( scSceneNode* node )
+scSceneNode* scSceneNode::_RemoveChild( scSceneNode* node )
 {
 	// 判断传入节点是否为该节点的子节点
 	auto iter = std::find(mChildren.begin(), mChildren.end(), node);
@@ -145,6 +145,6 @@ void scSceneNode::ChangeParent( scSceneNode* newParent )
 		return;
 	}
 
-	mParent->RemoveChild(this);
-	newParent->AddChild(this);
+	mParent->_RemoveChild(this);
+	newParent->_AddChild(this);
 }

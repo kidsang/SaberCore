@@ -9,7 +9,6 @@
 Texture2D colorMap : register( t0 );
 SamplerState colorSampler : register( s0 );
 
-
 cbuffer cbChangesEveryFrame : register( b0 )
 {
     matrix worldMatrix;
@@ -30,7 +29,6 @@ cbuffer cbCameraData : register( b3 )
     float3 cameraPos;
 };
 
-
 struct VS_Input
 {
     float4 pos  : POSITION;
@@ -46,7 +44,6 @@ struct PS_Input
     float3 lightVec : TEXCOORD1;
     float3 viewVec : TEXCOORD2;
 };
-
 
 PS_Input VS_Main( VS_Input vertex )
 {
@@ -66,7 +63,6 @@ PS_Input VS_Main( VS_Input vertex )
 
     return vsOut;
 }
-
 
 float4 PS_Main( PS_Input frag ) : SV_TARGET
 {
@@ -90,5 +86,4 @@ float4 PS_Main( PS_Input frag ) : SV_TARGET
     float3 finalColor = ambientColor + lightColor * diffuseTerm + lightColor * specularTerm;
 
 	return colorMap.Sample( colorSampler, frag.tex0 ) * float4(finalColor, 1.0f);
-    //return float4( finalColor, 1.0f );
 }

@@ -57,6 +57,9 @@
     <ClCompile Include="scSceneManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="scShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scRenderSystem.h">
@@ -113,5 +116,6 @@
     <None Include="..\..\res\mesh.txt" />
     <None Include="..\..\res\effect\test.fx" />
     <None Include="..\..\res\vshader.txt" />
+    <None Include="..\..\res\effect\Lighting.fx" />
   </ItemGroup>
 </Project>

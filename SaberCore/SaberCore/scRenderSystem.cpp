@@ -147,13 +147,15 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	mTextureManager.LoadAll();
 	mMeshManager.Initialize(mDevice);
 	mMeshManager.LoadArchive("../../res/mesh.txt");
-	//mMeshManager.LoadAll();
+	mMeshManager.LoadAll();
 	mVertexShaderManager.Initialize(mDevice);
 	mVertexShaderManager.LoadArchive("../../res/vshader.txt");
-	mVertexShaderManager.LoadAll();
+	//mVertexShaderManager.LoadAll();
+	mVertexShaderManager.CreateDefaultShader();
 	mPixelShaderManager.Initialize(mDevice);
 	mPixelShaderManager.LoadArchive("../../res/vshader.txt");
-	mPixelShaderManager.LoadAll();
+	//mPixelShaderManager.LoadAll();
+	mPixelShaderManager.CreateDefaultShader();
 
 	scSceneNode* root = mSceneManager.GetRootSceneNode();
 	mSceneManager.CreateSceneNode("1", root);
@@ -166,7 +168,7 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	five->ChangeParent(three);
 	mSceneManager.CreateSceneNode("5", root);
 
-	/*// sampler
+	// sampler
 	D3D11_SAMPLER_DESC samplerDesc;
 	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -211,7 +213,7 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	if( FAILED( hr ) )
 	{
 		return false;
-	}*/
+	}
 
 	return true;
 }
@@ -231,19 +233,19 @@ void scRenderSystem::RenderOneFrame()
 
 void scRenderSystem::_Draw()
 {
-    /*unsigned int stride = sizeof( scVertex );
+    unsigned int stride = sizeof( scVertex );
     unsigned int offset = 0;
 
 
-    mContext->IASetInputLayout(mVertexShaderManager.GetResourcePtr("light")->GetInputLayout());
+    mContext->IASetInputLayout(mVertexShaderManager.GetResourcePtr("default")->GetInputLayout());
 	scMesh* mesh = mMeshManager.GetResourcePtr("basicshape");
 	ID3D11Buffer* buff = mesh->GetMeshBufferPtr();
     mContext->IASetVertexBuffers( 0, 1, &buff, &stride, &offset );
     mContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-	ID3D11VertexShader* vs = mVertexShaderManager.GetResourcePtr("light")->GetShaderDataPtr();
+	ID3D11VertexShader* vs = mVertexShaderManager.GetResourcePtr("default")->GetShaderDataPtr();
     mContext->VSSetShader(vs, 0, 0 );
-	ID3D11PixelShader* ps = mPixelShaderManager.GetResourcePtr("light")->GetShaderDataPtr();
+	ID3D11PixelShader* ps = mPixelShaderManager.GetResourcePtr("default")->GetShaderDataPtr();
     mContext->PSSetShader( ps, 0, 0 );
 	scTexture* mtext = mTextureManager.GetResourcePtr("saber");
 	ID3D11ShaderResourceView* tex = mtext->GetTextureDataPtr();
@@ -267,7 +269,7 @@ void scRenderSystem::_Draw()
     mContext->VSSetConstantBuffers( 1, 1, &viewCB_ );
     mContext->VSSetConstantBuffers( 2, 1, &projCB_ );
 
-    mContext->Draw( mesh->GetVertexCount(), 0 );*/
+    mContext->Draw( mesh->GetVertexCount(), 0 );
 
 }
 

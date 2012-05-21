@@ -4,7 +4,7 @@
 
 scMesh::scMesh(std::string name, std::string path, std::string group)
 	: scResource(name, path, group),
-	mMeshBuffer(0)
+	mMeshBuffer(0), mPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
 {
 }
 

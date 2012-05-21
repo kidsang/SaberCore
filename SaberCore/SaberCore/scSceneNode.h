@@ -70,17 +70,15 @@ public:
 
 	
 	/// 将自身的update标志位设为true,并递归地通知所有子节点将自身update标志位设为true.
-	void NotifySelfAndChildren();
-
-	
+	void _NotifySelfAndChildren();
+ 
 	/// 添加子节点.
 	/// 该方法应该由SceneManager而不是用户调用
-	void AddChild(scSceneNode* node);
-
+	void _AddChild(scSceneNode* node); 
 	
 	/// 移除子节点.
 	/// 该方法应该由SceneManager而不是用户调用
-	scSceneNode* RemoveChild(scSceneNode* node);
+	scSceneNode* _RemoveChild(scSceneNode* node);
 
 	/// 更换当前节点的父节点
 	/// @param newParent 新的父节点 
@@ -91,11 +89,9 @@ public:
 
 	/// 判断该节点是否存在某个子节点
 	bool HasChild(scSceneNode* node);
-
 	
 	/// 重新计算继承自父节点的位置，旋转和缩放
 	void UpdateFromParent();
-
 	
 	/// 自顶向下地遍历父节点
 	/// 更新最终的变换矩阵

@@ -39,6 +39,31 @@ bool scPixelShader::LoadImpl( ID3D11Device* device )
 	return true;
 }
 
+bool scPixelShader::CreateDefaultShader( ID3D11Device* device )
+{
+	// ·ÀÖ¹ÄÚ´æÐ¹Â¶
+	if (mPixelShader)
+		mPixelShader->Release();
+
+	ID3DBlob* buffer;
+
+	if (!CompileFromMemory(&buffer, scShader::defaultShaderSrc))
+		return false;
+
+	HRESULT hr = device->CreatePixelShader(buffer->GetBufferPointer(), buffer->GetBufferSize(), 0, &mPixelShader);
+	if (FAILED(hr))
+	{
+		if (buffer)
+			buffer->Release();
+		scErrMsg("!!!Error creating pixel shader.");
+		return false;
+	}
+
+	buffer->Release();
+
+	return true;
+}
+
 void scPixelShader::UnloadImpl()
 {
 	if (mPixelShader)

@@ -94,7 +94,7 @@ bool scSceneManager::DestorySceneNode( const std::string& name )
 bool scSceneManager::DestorySceneNode( scSceneNode* node )
 {
 	// 将自己从父节点的列表中去除
-	node->GetParent()->RemoveChild(node);
+	node->GetParent()->_RemoveChild(node);
 
 	// 向下递归，将需要删除的节点加入删除列表
 	std::vector<scSceneNode*> delList;

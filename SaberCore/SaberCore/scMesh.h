@@ -15,6 +15,8 @@
 class scMesh : public scResource
 {
 private:
+	/// 图元类型
+	D3D11_PRIMITIVE_TOPOLOGY mPrimitiveTopology;
 	/// Mesh资源的硬件缓冲
 	ID3D11Buffer* mMeshBuffer;
 	/// 网格顶点的总数	
@@ -36,6 +38,12 @@ public:
 	virtual const std::string GetType()
 	{
 		return "mesh";
+	}
+
+	/// 返回图元类型
+	D3D11_PRIMITIVE_TOPOLOGY GetTopology()
+	{
+		return mPrimitiveTopology;
 	}
 
 	/// 返回顶点buffer
