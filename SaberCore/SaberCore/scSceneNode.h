@@ -82,6 +82,13 @@ public:
 	/// 该方法应该由SceneManager而不是用户调用
 	scSceneNode* RemoveChild(scSceneNode* node);
 
+	/// 更换当前节点的父节点
+	/// @param newParent 新的父节点 
+	/// @note 如果你尝试将一个节点挂载到它的子节点上，
+	///		  这样它们所属的所有节点事实上就从场景树上脱落了，
+	///       而且由于循环引用，这还会导致内存泄露
+	void ChangeParent(scSceneNode* newParent);
+
 	/// 判断该节点是否存在某个子节点
 	bool HasChild(scSceneNode* node);
 

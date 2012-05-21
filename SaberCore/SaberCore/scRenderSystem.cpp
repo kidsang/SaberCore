@@ -163,7 +163,7 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	scSceneNode* five = mSceneManager.CreateSceneNode("5", four);
 	scSceneNode* six = mSceneManager.CreateSceneNode("6", five);
 	scSceneNode* seven = mSceneManager.CreateSceneNode("7", five);
-	mSceneManager.DestorySceneNode("6");
+	five->ChangeParent(three);
 	mSceneManager.CreateSceneNode("5", root);
 
 	/*// sampler

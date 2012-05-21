@@ -127,3 +127,24 @@ void scSceneNode::UpdateInherited()
 		++riter;
 	}
 }
+
+void scSceneNode::ChangeParent( scSceneNode* newParent )
+{
+	// 防止2b青年修改根节点
+	if (!mParent)
+	{
+		scErrMsg("!!!This node " + mName + " do not have a parent,");
+		scErrMsg("are you tring to modify the root?");
+		return;
+	}
+
+	// 防止2b青年传入NULL
+	if (!newParent)
+	{
+		scErrMsg("!!!New parent can not be NULL. At scene node " + mName);
+		return;
+	}
+
+	mParent->RemoveChild(this);
+	newParent->AddChild(this);
+}
