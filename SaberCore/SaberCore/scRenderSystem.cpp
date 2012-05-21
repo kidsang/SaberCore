@@ -160,8 +160,10 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	mSceneManager.CreateSceneNode("2", root);
 	scSceneNode* three = mSceneManager.CreateSceneNode("3", root);
 	scSceneNode* four = mSceneManager.CreateSceneNode("4", three);
-	mSceneManager.CreateSceneNode("1", root);
-	mSceneManager.CreateSceneNode("1", NULL);
+	scSceneNode* five = mSceneManager.CreateSceneNode("5", four);
+	scSceneNode* six = mSceneManager.CreateSceneNode("6", five);
+	scSceneNode* seven = mSceneManager.CreateSceneNode("7", five);
+	mSceneManager.DestorySceneNode("6");
 	mSceneManager.CreateSceneNode("5", root);
 
 	/*// sampler

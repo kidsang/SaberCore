@@ -119,6 +119,12 @@ public:
 	{
 		return mNeedUpdate;
 	}
+
+	/// 获取该节点的所有子节点
+	const ChildrenList& GetChildren()
+	{
+		return mChildren;
+	}
  
 	/*/// 获取节点的朝向. 
 	const XMVECTOR GetOrientation() 
