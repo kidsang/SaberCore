@@ -11,6 +11,7 @@
 #include <D3Dcompiler.h>
 #include "scError.h"
 #include "scResourceManagerDef.h"
+#include "scSceneManager.h"
 
 /// 渲染引擎
 class scRenderSystem
@@ -47,6 +48,9 @@ private:
 	scVertexShaderManager mVertexShaderManager;
 	/// 像素shader管理类
 	scPixelShaderManager mPixelShaderManager;
+
+	/// 场景管理类
+	scSceneManager mSceneManager;
 
 	// 测试。。
 	ID3D11Buffer* viewCB_;

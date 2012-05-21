@@ -3,7 +3,10 @@
 
 scSceneManager::scSceneManager(void)
 {
-	//TODO: 创建根节点
+	// 创建根节点
+	scSceneNode* root = new scSceneNode(this, "root", NULL);
+	mSceneNodeMap["root"] = root;
+	mRootSceneNode = root;
 }
 
 

@@ -34,11 +34,14 @@ private:
 	scSceneManager* mSceneManager;	
  
 	/// 节点自身的朝向
-	XMVECTOR mOrientation;			
+	//XMVECTOR mOrientation;			
+	XMFLOAT4 mOrientation;
 	/// 节点自身的位置	
-	XMVECTOR mPosition;				
+	//XMVECTOR mPosition;				
+	XMFLOAT3 mPosition;
 	/// 节点自身的缩放
-	XMVECTOR mScale;				
+	//XMVECTOR mScale;				
+	XMFLOAT3 mScale;
 
 	/// 节点缓存的从父节点继承而来的朝向
 	XMVECTOR mDerivedOrientation;	
@@ -67,30 +70,28 @@ public:
 
 	
 	/// 将自身的update标志位设为true,并递归地通知所有子节点将自身update标志位设为true.
-	 
 	void NotifySelfAndChildren();
 
 	
 	/// 添加子节点.
 	/// 该方法应该由SceneManager而不是用户调用
-	 
 	void AddChild(scSceneNode* node);
 
 	
 	/// 移除子节点.
 	/// 该方法应该由SceneManager而不是用户调用
-	 
 	scSceneNode* RemoveChild(scSceneNode* node);
+
+	/// 判断该节点是否存在某个子节点
+	bool HasChild(scSceneNode* node);
 
 	
 	/// 重新计算继承自父节点的位置，旋转和缩放
-	 
 	void UpdateFromParent();
 
 	
 	/// 自顶向下地遍历父节点
 	/// 更新最终的变换矩阵
-	 
 	void UpdateInherited();
 
 	// Get/Set
@@ -108,7 +109,7 @@ public:
 	} 
 	
 	/// 设置节点的父节点. 
-	void SetParent(scSceneNode* node)
+	void _SetParent(scSceneNode* node)
 	{
 		mParent = node;
 	}
@@ -119,7 +120,7 @@ public:
 		return mNeedUpdate;
 	}
  
-	/// 获取节点的朝向. 
+	/*/// 获取节点的朝向. 
 	const XMVECTOR GetOrientation() 
 	{ 
 		return mOrientation;
@@ -156,7 +157,7 @@ public:
 	{
 		mScale = val; 
 		NotifySelfAndChildren();
-	}
+	}*/
 
 	/// 获取当前缓存的继承自父节点的朝向
 	const XMVECTOR _GetDerivedOrientation()

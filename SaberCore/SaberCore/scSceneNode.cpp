@@ -3,12 +3,16 @@
 
 scSceneNode::scSceneNode(scSceneManager* creator, std::string name, scSceneNode* parent)
 	: mSceneManager(creator), mName(name), mParent(parent), 
-	mNeedUpdate(true),
-	mOrientation(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)),
-	mScale(XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f)),
-	mPosition(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f))
+	mOrientation(XMFLOAT4(0.f, 0.f, 0.f, 1.f)), 
+	mPosition(XMFLOAT3(0.f, 0.f, 0.f)), 
+	mScale(XMFLOAT3(1.f, 1.f, 1.f)),
+	mNeedUpdate(true)
 {
 	// mSceneManager 应该永远不为NULL
+
+	// root节点没有父亲
+	if (parent)
+		parent->AddChild(this);
 }
 
 
@@ -33,7 +37,7 @@ void scSceneNode::NotifySelfAndChildren()
 void scSceneNode::AddChild( scSceneNode* node )
 {
 	// 确保每个节点仅有一个父节点
-	if (node->GetParent())
+	if (node->GetParent() && node->GetParent()->HasChild(node)) 
 	{
 		scErrMsg("!!!The node " + node->GetName() + " you add to " + mName + " already has a parent " + node->GetParent()->GetName());
 		scErrMsg("you must first call the RemoveChild() function.");
@@ -41,7 +45,7 @@ void scSceneNode::AddChild( scSceneNode* node )
 	}
 
 	// 设置子节点的父节点
-	node->SetParent(this);
+	node->_SetParent(this);
 
 	// 因为该子节点变更了父节点
 	// 因此该子节点需要重新计算自己的缓存
@@ -64,26 +68,22 @@ scSceneNode* scSceneNode::RemoveChild( scSceneNode* node )
 	mChildren.erase(iter);
 
 	// 将该节点的父节点设置为空
-	node->SetParent(NULL);
+	node->_SetParent(NULL);
 
 	return node;
 }
 
-/*scSceneNode* scSceneNode::RemoveChild( const std::string& name )
+bool scSceneNode::HasChild( scSceneNode* node )
 {
-	// 首先在场景管理类中查找是否存在使用该名称的场景节点
-	scSceneNode* node = mSceneManager->GetSceneNode(name);
-	if (!node)
-		return NULL;
-
-	return RemoveChild(node);
-}*/
+	auto iter = find(mChildren.begin(), mChildren.end(), node);
+	return ( (iter == mChildren.end()) ? false : true );
+}
 
 void scSceneNode::UpdateFromParent()
 {
-	mDerivedOrientation = mOrientation;
-	mDerivedPosition = mPosition;
-	mDerivedScale = mScale;
+	mDerivedOrientation = XMLoadFloat4(&mOrientation);
+	mDerivedPosition = XMVectorSet(mPosition.x, mPosition.y, mPosition.z, 1.0f);
+	mDerivedScale = XMVectorSet(mScale.x, mScale.y, mScale.z, 1.0f);
 
 	// 根节点没有父亲
 	// 虽然说根节点不会改变位置，不过以防万一

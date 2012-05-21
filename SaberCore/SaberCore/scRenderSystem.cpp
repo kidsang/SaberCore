@@ -147,7 +147,7 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	mTextureManager.LoadAll();
 	mMeshManager.Initialize(mDevice);
 	mMeshManager.LoadArchive("../../res/mesh.txt");
-	mMeshManager.LoadAll();
+	//mMeshManager.LoadAll();
 	mVertexShaderManager.Initialize(mDevice);
 	mVertexShaderManager.LoadArchive("../../res/vshader.txt");
 	mVertexShaderManager.LoadAll();
@@ -155,7 +155,16 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	mPixelShaderManager.LoadArchive("../../res/vshader.txt");
 	mPixelShaderManager.LoadAll();
 
-	// sampler
+	scSceneNode* root = mSceneManager.GetRootSceneNode();
+	mSceneManager.CreateSceneNode("1", root);
+	mSceneManager.CreateSceneNode("2", root);
+	scSceneNode* three = mSceneManager.CreateSceneNode("3", root);
+	scSceneNode* four = mSceneManager.CreateSceneNode("4", three);
+	mSceneManager.CreateSceneNode("1", root);
+	mSceneManager.CreateSceneNode("1", NULL);
+	mSceneManager.CreateSceneNode("5", root);
+
+	/*// sampler
 	D3D11_SAMPLER_DESC samplerDesc;
 	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -200,7 +209,7 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	if( FAILED( hr ) )
 	{
 		return false;
-	}
+	}*/
 
 	return true;
 }
@@ -220,7 +229,7 @@ void scRenderSystem::RenderOneFrame()
 
 void scRenderSystem::_Draw()
 {
-    unsigned int stride = sizeof( scVertex );
+    /*unsigned int stride = sizeof( scVertex );
     unsigned int offset = 0;
 
 
@@ -256,7 +265,7 @@ void scRenderSystem::_Draw()
     mContext->VSSetConstantBuffers( 1, 1, &viewCB_ );
     mContext->VSSetConstantBuffers( 2, 1, &projCB_ );
 
-    mContext->Draw( mesh->GetVertexCount(), 0 );
+    mContext->Draw( mesh->GetVertexCount(), 0 );*/
 
 }
 
