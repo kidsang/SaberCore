@@ -28,7 +28,7 @@ public:
 	/// @param name 该物件的名字
 	/// @note Movable 必须由SceneManager而不是用户来创建
 	scMovable(scSceneManager* sceneManager, const std::string& name);
-	~scMovable(void);
+	virtual ~scMovable(void);
 
 	/// 返回该物件的名字
 	const std::string GetName()

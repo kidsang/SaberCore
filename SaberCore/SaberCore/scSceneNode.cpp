@@ -76,7 +76,7 @@ scSceneNode* scSceneNode::_RemoveChild( scSceneNode* node )
 bool scSceneNode::HasChild( scSceneNode* node )
 {
 	auto iter = find(mChildren.begin(), mChildren.end(), node);
-	return ( (iter == mChildren.end()) ? false : true );
+	return (iter != mChildren.end());
 }
 
 void scSceneNode::UpdateFromParent()

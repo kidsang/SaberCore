@@ -1,6 +1,5 @@
 #include "scSceneManager.h"
 
-
 scSceneManager::scSceneManager(void)
 {
 	// 创建根节点
@@ -14,6 +13,9 @@ scSceneManager::~scSceneManager(void)
 {
 	// 清空节点列表
 	for (auto iter = mSceneNodeMap.begin(); iter != mSceneNodeMap.end(); ++iter)
+		delete (*iter).second;
+	// 清空Movable Object列表
+	for (auto iter = mObjectMap.begin(); iter != mObjectMap.end(); ++iter)
 		delete (*iter).second;
 }
 
@@ -29,7 +31,7 @@ scSceneNode* scSceneManager::GetSceneNode( const std::string& name )
 	return (*iter).second;
 }
 
-scSceneNode* scSceneManager::CreateSceneNode( std::string name, scSceneNode* parent )
+scSceneNode* scSceneManager::CreateSceneNode( const std::string& name, scSceneNode* parent )
 {
 	// 父节点不可为空
 	if (!parent)
@@ -109,4 +111,22 @@ bool scSceneManager::DestorySceneNode( scSceneNode* node )
 	}
 
 	return true;
+}
+
+bool scSceneManager::_ObjectNameExist( const std::string& name )
+{
+	auto iter = mObjectMap.find(name);
+	return (iter != mObjectMap.end());
+}
+
+scMovable* scSceneManager::GetObject( const std::string& name )
+{
+	auto iter = mObjectMap.find(name);
+	if (iter == mObjectMap.end())
+	{
+		scErrMsg("!!!Can not find movable object " + name);
+		return NULL;
+	}
+
+	return (*iter).second;
 }

@@ -38,7 +38,7 @@ public:
 	/// @param vs 对象的vertex shader
 	/// @param ps 对象的pixel shader
 	scRenderable(scMesh* mesh, scVertexShader* vs, scPixelShader* ps);
-	~scRenderable(void);
+	virtual ~scRenderable(void);
 
 	/// 增加纹理
 	void AddTexture(scTexture* tex)

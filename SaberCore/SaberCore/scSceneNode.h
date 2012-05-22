@@ -17,30 +17,33 @@
 /// 由于我已经在scSceneManager中include了scSceneNode的头文件
 /// 因此我不能在这里include scSceneManager的头文件
 class scSceneManager;
+/// 基于同样的考虑
+class scMovable;
 
 /// 场景节点类.
 class scSceneNode
 {
 	typedef std::vector<scSceneNode*> ChildrenList;
+	typedef std::vector<scMovable*> ObjectList;
 
 private:
 	/// 每个节点必须要有一个独一无二的名称
 	std::string mName;				
 	/// 父节点
 	scSceneNode* mParent;			
-	/// 子节点 
-	ChildrenList mChildren;			
 	/// 创建该节点的场景管理类
 	scSceneManager* mSceneManager;	
+
+	/// 子节点 
+	ChildrenList mChildren;			
+	/// 附在场景节点上的物体
+	ObjectList mObjects;
  
 	/// 节点自身的朝向
-	//XMVECTOR mOrientation;			
 	XMFLOAT4 mOrientation;
 	/// 节点自身的位置	
-	//XMVECTOR mPosition;				
 	XMFLOAT3 mPosition;
 	/// 节点自身的缩放
-	//XMVECTOR mScale;				
 	XMFLOAT3 mScale;
 
 	/// 节点缓存的从父节点继承而来的朝向
@@ -89,6 +92,66 @@ public:
 
 	/// 判断该节点是否存在某个子节点
 	bool HasChild(scSceneNode* node);
+
+	/// 在节点上挂载物体
+	/// @param object 需要挂载的物体
+	void AttachObject(scMovable* object)
+	{
+		mObjects.push_back(object);
+	}
+
+	/// 将物体从节点摘除
+	/// @param object 需要摘除的物体
+	void DetachObject(scMovable* object)
+	{
+		auto iter = find(mObjects.begin(), mObjects.end(), object);
+		if (iter != mObjects.end())
+			mObjects.erase(iter);
+	}
+
+	/// 将物体从节点摘除
+	/// @param index 需要摘除的物体的索引
+	scMovable* DetachObject(unsigned int index)
+	{
+		if (index > mObjects.size())
+		{
+			scErrMsg("!!!Index out of range when detaching scene node " + mName + "'s object");
+			return NULL;
+		}
+		auto iter = mObjects.begin();
+		iter += index;
+		mObjects.erase(iter);
+		
+		return (*iter);
+	}
+
+	/// 将物体从节点摘除
+	/// @param index 需要摘除的物体的索引
+	scMovable* DetachObject(const std::string& name)
+	{
+		/*scMovable* object = mSceneManager->GetObject(name);
+
+		if (object != NULL)
+		{
+			DetachObject(object);
+			return object;
+		}*/
+
+		return NULL;
+	}
+
+	/// 获得指定索引的物体
+	/// @param 物体的索引
+	scMovable* GetObject(unsigned int index)
+	{
+		if (index > mObjects.size())
+		{
+			scErrMsg("!!!Index out of range when getting scene node " + mName + "'s object");
+			return NULL;
+		}
+		return mObjects.at(index);
+	}
+
 	
 	/// 重新计算继承自父节点的位置，旋转和缩放
 	void UpdateFromParent();
