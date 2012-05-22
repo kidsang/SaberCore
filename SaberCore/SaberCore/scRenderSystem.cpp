@@ -1,7 +1,13 @@
 #include "scRenderSystem.h"
 
+// 静态成员的初始化
+scTextureManager scRenderSystem::mTextureManager;
+scMeshManager scRenderSystem::mMeshManager;
+scVertexShaderManager scRenderSystem::mVertexShaderManager;
+scPixelShaderManager scRenderSystem::mPixelShaderManager;
+
 scRenderSystem::scRenderSystem(void)
-	: mHwnd(0),
+	: mHwnd(0), mInitialized(false),
 	mDriverType(D3D_DRIVER_TYPE_NULL), mFeatureLevel(D3D_FEATURE_LEVEL_11_0),
 	mDevice(0), mContext(0), mSwapChain(0),
 	mBackBuffer(0), mDepthBuffer(0),
@@ -9,7 +15,6 @@ scRenderSystem::scRenderSystem(void)
 {
 
 }
-
 
 scRenderSystem::~scRenderSystem(void)
 {
@@ -155,18 +160,7 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 	mPixelShaderManager.Initialize(mDevice);
 	mPixelShaderManager.LoadArchive("../../res/vshader.txt");
 	//mPixelShaderManager.LoadAll();
-	mPixelShaderManager.CreateDefaultShader();
-
-	scSceneNode* root = mSceneManager.GetRootSceneNode();
-	mSceneManager.CreateSceneNode("1", root);
-	mSceneManager.CreateSceneNode("2", root);
-	scSceneNode* three = mSceneManager.CreateSceneNode("3", root);
-	scSceneNode* four = mSceneManager.CreateSceneNode("4", three);
-	scSceneNode* five = mSceneManager.CreateSceneNode("5", four);
-	scSceneNode* six = mSceneManager.CreateSceneNode("6", five);
-	scSceneNode* seven = mSceneManager.CreateSceneNode("7", five);
-	five->ChangeParent(three);
-	mSceneManager.CreateSceneNode("5", root);
+	mPixelShaderManager.CreateDefaultShader(); 
 
 	// sampler
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -185,6 +179,27 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 		return false;
 	}
 
+	// 初始化完成
+	mInitialized = true;
+
+	return _LoadScene();
+}
+
+bool scRenderSystem::_LoadScene()
+{
+	HRESULT hr;
+
+	// 测试场景节点
+	scSceneNode* root = mSceneManager.GetRootSceneNode();
+	mSceneManager.CreateSceneNode("1", root);
+	mSceneManager.CreateSceneNode("2", root);
+	scSceneNode* three = mSceneManager.CreateSceneNode("3", root);
+	scSceneNode* four = mSceneManager.CreateSceneNode("4", three);
+	scSceneNode* five = mSceneManager.CreateSceneNode("5", four);
+	scSceneNode* six = mSceneManager.CreateSceneNode("6", five);
+	scSceneNode* seven = mSceneManager.CreateSceneNode("7", five);
+	five->ChangeParent(three);
+	mSceneManager.CreateSceneNode("5", root);
 
 	// 测试。。。
 	// const buffers

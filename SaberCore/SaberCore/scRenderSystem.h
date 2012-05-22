@@ -40,14 +40,17 @@ private:
 	/// 纹理采样器
 	ID3D11SamplerState* mSampler;
 
+	/// 初始化完成标志
+	bool mInitialized;
+
 	/// 纹理管理类
-	scTextureManager mTextureManager;
+	static scTextureManager mTextureManager;
 	/// 网格管理类
-	scMeshManager mMeshManager;
+	static scMeshManager mMeshManager;
 	/// 顶点shader管理类
-	scVertexShaderManager mVertexShaderManager;
+	static scVertexShaderManager mVertexShaderManager;
 	/// 像素shader管理类
-	scPixelShaderManager mPixelShaderManager;
+	static scPixelShaderManager mPixelShaderManager;
 
 	/// 场景管理类
 	scSceneManager mSceneManager;
@@ -71,11 +74,46 @@ public:
 	/// 清除与销毁工作
 	void Release();
 
+public:
+	// 原谅我的懒惰。。
+	// 我不知道是否应该将各个资源管理类做成单例
+	// 我也不知道是否应该将render system做成单例
+	// 所以暂且使用这种方法吧。。
+
+	/// 获取纹理管理类
+	static scTextureManager& GetTextureManager()
+	{
+		return mTextureManager;
+	}
+
+	/// 获取网格管理类
+	static scMeshManager& GetMeshManager()
+	{
+		return mMeshManager;
+	}
+
+	/// 获取vertex shader管理类
+	static scVertexShaderManager& GetVertexShaderManager()
+	{
+		return mVertexShaderManager;
+	}
+
+	/// 获取pixel shader管理类
+	static scPixelShaderManager& GetPixelShaderManager()
+	{
+		return mPixelShaderManager;
+	}
+
 private:
+	/// 创建场景
+	bool _LoadScene();
+
 	/// 将每个可渲染对象的数据传入显卡
 	void _Draw();
 
+
 };
+
 
 #endif // scRenderSystemD11_h__
 

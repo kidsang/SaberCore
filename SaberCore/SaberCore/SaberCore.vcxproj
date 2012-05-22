@@ -72,6 +72,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="scArchiveLoader.cpp" />
+    <ClCompile Include="scEntity.cpp" />
     <ClCompile Include="scMesh.cpp" />
     <ClCompile Include="scMovable.cpp" />
     <ClCompile Include="scPixelShader.cpp" />
@@ -88,6 +89,8 @@
   <ItemGroup>
     <ClInclude Include="objLoader.h" />
     <ClInclude Include="scArchiveLoader.h" />
+    <ClInclude Include="scCommon.h" />
+    <ClInclude Include="scEntity.h" />
     <ClInclude Include="scError.h" />
     <ClInclude Include="scMesh.h" />
     <ClInclude Include="scMovable.h" />

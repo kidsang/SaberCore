@@ -31,6 +31,7 @@ private:
 
 	/// 渲染队列。
 	/// 当场景渲染时，场景管理类将需要渲染的对象加入渲染队列
+	/// TODO:暂且先用这个充数，将来要换成真正的类
 	RenderQueue mRenderQueue;
 
 public:
@@ -68,8 +69,9 @@ public:
 
 	/// 创建一个Movable Object以供挂载到场景节点
 	/// @param name 该物体的名字
+	/// @param factoryName 指定的工厂类的名字
 	/// @return 返回已创建的object的指针，如果创建失败则返回NULL
-	scMovable* CreateObject(const std::string& name)
+	scMovable* CreateObject(const std::string& name, const std::string& factoryName)
 	{
 		if (_ObjectNameExist(name))
 		{
@@ -85,13 +87,13 @@ public:
 	/// @return 返回object的指针，如果未找到则返回NULL
 	scMovable* GetObject(const std::string& name);
 
+	/// 判断一个Movable Object的名称是否已存在
+	/// 仅供内部使用
+	bool _ObjectNameExist(const std::string& name);
+
 private:
 	/// 递归地将传入节点的子节点加入删除列表
 	void _AddNodeToDelList(scSceneNode* node, std::vector<scSceneNode*>& delList);
-
-	/// 判断一个Movable Object的名称是否已存在
-	bool _ObjectNameExist(const std::string& name);
-
 };
 
 #endif // scSceneManager_h__

@@ -6,7 +6,8 @@ scMovable::scMovable(scSceneManager* sceneManager, const std::string& name)
 {
 }
 
-
-scMovable::~scMovable(void)
+scMovable::~scMovable( void )
 {
+
 }
+
