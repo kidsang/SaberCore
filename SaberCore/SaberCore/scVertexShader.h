@@ -21,7 +21,7 @@ private:
 public:
 	/// 构造函数
 	/// @see scResource().
-	scVertexShader(std::string name, std::string path, std::string group);
+	scVertexShader(const std::string& name, const std::string& path, const std::string& group);
 	~scVertexShader(void);
 
 	/// 返回资源类型字符串

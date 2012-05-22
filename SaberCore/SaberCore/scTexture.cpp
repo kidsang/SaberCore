@@ -1,7 +1,7 @@
 #include "scTexture.h"
 
 
-scTexture::scTexture(std::string name, std::string path, std::string group)
+scTexture::scTexture(const std::string& name, const std::string& path, const std::string& group)
 	: scResource(name, path, group),
 	mTextureBuffer(0)
 {

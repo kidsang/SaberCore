@@ -25,7 +25,7 @@ private:
 public:
 	/// 构造函数
 	/// @see scResource().
-	scMesh(std::string name, std::string path, std::string group);
+	scMesh(const std::string& name, const std::string& path, const std::string& group);
 	~scMesh(void);
 
 	/// 装载网格的实现

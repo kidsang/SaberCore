@@ -1,7 +1,7 @@
 #include "scPixelShader.h"
 
 
-scPixelShader::scPixelShader(std::string name, std::string path, std::string group)
+scPixelShader::scPixelShader(const std::string& name, const std::string& path, const std::string& group)
 	: scShader(name, path, group),
 	mPixelShader(0)
 {

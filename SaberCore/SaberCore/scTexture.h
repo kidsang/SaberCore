@@ -19,7 +19,7 @@ private:
 public:
 	/// 构造函数
 	/// @see scResource().
-	scTexture(std::string name, std::string path, std::string group);
+	scTexture(const std::string& name, const std::string& path, const std::string& group);
 	~scTexture(void);
 
 	/// 获取纹理资源数据的指针

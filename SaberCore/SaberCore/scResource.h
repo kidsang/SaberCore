@@ -36,7 +36,7 @@ public:
 	 /// @param name 资源的名称
 	 /// @param path 资源的硬盘路径
 	 /// @param group 资源的分组，如果资源不属于任何组，那么它将在default中
-	scResource(std::string name, std::string path, std::string group);
+	scResource(const std::string& name, const std::string& path, const std::string& group);
 	virtual ~scResource(void);
 
 	static std::string TypeString;

@@ -19,7 +19,7 @@ private:
 public:
 	/// 构造函数
 	/// @see scResource().
-	scPixelShader(std::string name, std::string path, std::string group);
+	scPixelShader(const std::string& name, const std::string& path, const std::string& group);
 	~scPixelShader(void);
 
 	/// 返回资源类型字符串

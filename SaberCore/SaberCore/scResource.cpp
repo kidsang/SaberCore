@@ -1,6 +1,6 @@
 #include "scResource.h"
 
-scResource::scResource(std::string name, std::string path, std::string group)
+scResource::scResource(const std::string& name, const std::string& path, const std::string& group)
 	:mName(name), mPath(path), mGroup(group),
 	mLoadingState(LS_UNLOADED)
 {

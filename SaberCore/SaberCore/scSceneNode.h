@@ -64,7 +64,7 @@ public:
 	/// @param creator 创建该节点的场景管理类
 	/// @param name 节点的名称 
 	/// @param parent 节点的父节点 
-	scSceneNode(scSceneManager* creator, std::string name, scSceneNode* parent);
+	scSceneNode(scSceneManager* creator, const std::string& name, scSceneNode* parent);
 
 	~scSceneNode(void);
 

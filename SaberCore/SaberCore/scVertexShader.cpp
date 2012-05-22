@@ -2,7 +2,7 @@
 #include "scVertex.h"
 
 
-scVertexShader::scVertexShader(std::string name, std::string path, std::string group)
+scVertexShader::scVertexShader(const std::string& name, const std::string& path, const std::string& group)
 	: scShader(name, path, group),
 	 mVertexShader(0), mInputLayout(0)
 {

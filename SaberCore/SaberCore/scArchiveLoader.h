@@ -26,7 +26,7 @@ class scArchiveLoader
 		std::string path;
 		std::string group;
 
-		Entry(std::string n, std::string p, std::string g)
+		Entry(const std::string& n, const std::string& p, const std::string& g)
 			: name(n), path(p), group(g)
 		{
 

@@ -60,6 +60,9 @@
     <ClCompile Include="scShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="scMovable.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scRenderSystem.h">
@@ -108,6 +111,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="scSceneManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="scMovable.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

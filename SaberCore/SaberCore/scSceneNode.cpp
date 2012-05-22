@@ -1,7 +1,7 @@
 #include "scSceneNode.h"
 #include "scSceneManager.h"
 
-scSceneNode::scSceneNode(scSceneManager* creator, std::string name, scSceneNode* parent)
+scSceneNode::scSceneNode(scSceneManager* creator, const std::string& name, scSceneNode* parent)
 	: mSceneManager(creator), mName(name), mParent(parent), 
 	mOrientation(XMFLOAT4(0.f, 0.f, 0.f, 1.f)), 
 	mPosition(XMFLOAT3(0.f, 0.f, 0.f)), 

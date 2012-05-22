@@ -2,7 +2,7 @@
 #include "objLoader.h"
 
 
-scMesh::scMesh(std::string name, std::string path, std::string group)
+scMesh::scMesh(const std::string& name, const std::string& path, const std::string& group)
 	: scResource(name, path, group),
 	mMeshBuffer(0), mPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
 {
