@@ -200,8 +200,8 @@ bool scRenderSystem::_LoadScene()
 	scSceneNode* seven = mSceneManager.CreateSceneNode("7", five);
 
 	scEntity* ent = mSceneManager.CreateEntity("test", "basicshape");
+	ent->AddTexture(mTextureManager.GetResourcePtr("saber"));
 	six->AttachObject(ent);
-	ent = mSceneManager.CreateEntity("test1", "basicshape");
 
 	// 测试。。。
 	// const buffers
@@ -256,8 +256,63 @@ void scRenderSystem::_Draw()
     unsigned int stride = sizeof( scVertex );
     unsigned int offset = 0;
 
+	// sampler
+	mContext->PSSetSamplers(0, 1, &mSampler);
 
-    mContext->IASetInputLayout(mVertexShaderManager.GetResourcePtr("default")->GetInputLayout());
+	// 视矩阵(摄像机矩阵)
+	XMMATRIX viewMat = XMMatrixLookAtLH(XMVectorSet(0, 0, 50, 1), XMVectorSet(0, 0, 0, 1), XMVectorSet(0, 1, 0, 1));
+	viewMat = XMMatrixTranspose( viewMat );
+	mContext->UpdateSubresource( viewCB_, 0, 0, &viewMat, 0, 0 );
+	mContext->VSSetConstantBuffers( 1, 1, &viewCB_ );
+
+	// 投影矩阵(viewport相关)
+	XMMATRIX projMat = XMMatrixPerspectiveFovLH( XM_PIDIV4, 500.f / 500.0f, 0.01f, 1000.0f );
+	projMat = XMMatrixTranspose( projMat );
+	mContext->UpdateSubresource( projCB_, 0, 0, &projMat, 0, 0 );
+	mContext->VSSetConstantBuffers( 2, 1, &projCB_ );
+
+	// 遍历渲染列表
+	scRenderable* ro;
+	auto iter = mSceneManager.GetRenderQueue().begin();
+	while (iter != mSceneManager.GetRenderQueue().end())
+	{
+		ro = (*iter);
+
+		scMesh* mesh = ro->GetMesh();
+		scVertexShader* vs = ro->GetVertexShader();
+		scPixelShader* ps = ro->GetPixelShader();
+
+		ID3D11Buffer* meshBuf = mesh->GetMeshBufferPtr();
+		mContext->IASetVertexBuffers(0, 1, &meshBuf, &stride, &offset);
+		mContext->IASetPrimitiveTopology(mesh->GetTopology());
+
+		mContext->VSSetShader(vs->GetShaderDataPtr(), 0, 0);
+		mContext->IASetInputLayout(vs->GetInputLayout());
+
+		mContext->PSSetShader(ps->GetShaderDataPtr(), 0, 0);
+		if (!ro->GetTextures().empty())
+		{
+			auto texIter = ro->GetTextures().begin();
+			while (texIter != ro->GetTextures().end())
+			{
+				ID3D11ShaderResourceView* tex = (*texIter)->GetTextureDataPtr();
+				//TODO: 不知道这样做多重纹理会不会有问题
+				mContext->PSSetShaderResources(0, 1, &tex);
+				++texIter;
+			}
+		}
+
+		XMMATRIX worldMat = XMLoadFloat4x4(&ro->_GetTransform());
+		worldMat = XMMatrixTranspose( worldMat ); 
+		mContext->UpdateSubresource( worldCB_, 0, 0, &worldMat, 0, 0 ); 
+		mContext->VSSetConstantBuffers( 0, 1, &worldCB_ );
+
+		mContext->Draw( mesh->GetVertexCount(), 0 );
+
+		++iter;
+	}
+
+    /*mContext->IASetInputLayout(mVertexShaderManager.GetResourcePtr("default")->GetInputLayout());
 	scMesh* mesh = mMeshManager.GetResourcePtr("basicshape");
 	ID3D11Buffer* buff = mesh->GetMeshBufferPtr();
     mContext->IASetVertexBuffers( 0, 1, &buff, &stride, &offset );
@@ -289,7 +344,7 @@ void scRenderSystem::_Draw()
     mContext->VSSetConstantBuffers( 1, 1, &viewCB_ );
     mContext->VSSetConstantBuffers( 2, 1, &projCB_ );
 
-    mContext->Draw( mesh->GetVertexCount(), 0 );
+    mContext->Draw( mesh->GetVertexCount(), 0 );*/
 
 }
 
