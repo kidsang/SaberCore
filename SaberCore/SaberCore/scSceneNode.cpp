@@ -107,8 +107,8 @@ void scSceneNode::_UpdateFromParent()
 
 	// 更新变换矩阵
 	// scale -> rotate -> translate
-	XMMATRIX mat = XMMatrixTransformation(XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f), XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
-		sca, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f), ori, pos);
+	XMMATRIX mat = XMMatrixTransformation(XMLoadFloat3(&XMFLOAT3(0, 0, 0)), XMLoadFloat3(&XMFLOAT3(0, 0, 0)),
+		sca, XMLoadFloat3(&XMFLOAT3(0, 0, 0)), ori, pos);
 	XMStoreFloat4x4(&mDerivedTransform, mat);
 	
 	// 更新结束

@@ -203,6 +203,14 @@ bool scRenderSystem::_LoadScene()
 	ent->AddTexture(mTextureManager.GetResourcePtr("saber"));
 	six->AttachObject(ent);
 
+	six->SetPosition(0, 0, -50);
+	four->SetPosition(10, 0, 0);
+	XMVECTOR rotvec = XMQuaternionRotationRollPitchYaw(0.57, 0, 0);
+	XMFLOAT4 rot;
+	XMStoreFloat4(&rot, rotvec);
+	six->SetOrientation(rot);
+	six->SetScale(1, 2, 1);
+
 	// ≤‚ ‘°£°£°£
 	// const buffers
 	D3D11_BUFFER_DESC constDesc;

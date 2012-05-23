@@ -192,44 +192,62 @@ public:
 		mVisible = isVisible;
 	}
 
-	/*/// 获取节点的朝向. 
-	const XMVECTOR GetOrientation() 
+	/// 获取节点的朝向. 
+	const XMFLOAT4& GetOrientation() 
 	{ 
 		return mOrientation;
 	}
  
 	/// 设置节点的朝向 
-	void SetOrientation(const XMVECTOR& val) 
+	void SetOrientation(const XMFLOAT4& val) 
 	{
 		mOrientation = val;
-		NotifySelfAndChildren();
+		_NotifySelfAndChildren();
+	}
+
+	/// 设置节点的朝向 
+	void SetOrientation(float x, float y, float z, float w) 
+	{
+		SetOrientation(XMFLOAT4(x, y, z, w));
 	}
  
 	/// 获取节点的位置 
-	const XMVECTOR GetPosition() 
+	const XMFLOAT3& GetPosition() 
 	{
 		return mPosition; 
 	}
 
 	/// 设置节点的位置 
-	void SetPosition(const XMVECTOR& val) 
+	void SetPosition(const XMFLOAT3& val) 
 	{
 		mPosition = val; 
-		NotifySelfAndChildren();
+		_NotifySelfAndChildren();
+	}
+ 
+	/// 设置节点的位置 
+	void SetPosition(float x, float y, float z) 
+	{
+		SetPosition(XMFLOAT3(x, y, z));
 	}
  
 	/// 获取节点的缩放 
-	const XMVECTOR GetScale() 
+	const XMFLOAT3& GetScale() 
 	{
 		return mScale; 
 	}
  
 	/// 设置节点的缩放
-	void SetScale(const XMVECTOR& val)
+	void SetScale(const XMFLOAT3& val)
 	{
 		mScale = val; 
-		NotifySelfAndChildren();
-	}*/
+		_NotifySelfAndChildren();
+	}
+
+	/// 设置节点的缩放
+	void SetScale(float x, float y, float z)
+	{
+		SetScale(XMFLOAT3(x, y, z));
+	}
 
 	/// 获取当前缓存的继承自父节点的朝向
 	const XMFLOAT4& _GetDerivedOrientation()
