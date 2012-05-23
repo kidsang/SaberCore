@@ -16,6 +16,10 @@
 #include "scMovable.h"
 #include "scEntity.h"
 
+// win gdi 也有一个同名的宏
+#undef GetObjectW
+#undef GetObject
+
 /// 场景管理类
 class scSceneManager
 {
@@ -43,13 +47,6 @@ private:
 public:
 	scSceneManager(void);
 	~scSceneManager(void);
-
-	/// 获取场景根节点
-	/// @return 场景根节点
-	scSceneNode* GetRootSceneNode()
-	{
-		return mRootSceneNode;
-	}
 
 	/// 创建场景节点
 	/// @param name 节点的名称
@@ -87,6 +84,28 @@ public:
 	/// 判断一个Movable Object的名称是否已存在
 	/// 仅供内部使用
 	bool _ObjectNameExist(const std::string& name);
+
+	/// 渲染场景
+	/// 遍历场景树并将渲染对象加入渲染队列
+	void RenderScene();
+
+	/// 准备渲染队列
+	void _PrepareRenderQueue();
+
+	// Get/Set
+public:
+	/// 返回渲染队列
+	RenderQueue& GetRenderQueue()
+	{
+		return mRenderQueue;
+	}
+ 
+	/// 获取场景根节点
+	/// @return 场景根节点
+	scSceneNode* GetRootSceneNode()
+	{
+		return mRootSceneNode;
+	}
 
 private:
 	/// 递归地将传入节点的子节点加入删除列表

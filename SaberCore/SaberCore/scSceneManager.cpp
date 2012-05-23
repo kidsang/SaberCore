@@ -168,3 +168,17 @@ scEntity* scSceneManager::CreateEntity( const std::string& name, const std::stri
 
 	return static_cast<scEntity*>(_CreateObject(name, "entity", params));
 }
+
+void scSceneManager::RenderScene()
+{
+	// 准备渲染队列
+	_PrepareRenderQueue();
+
+	// 从根节点开始递归，查找所有需要被渲染的节点
+	mRootSceneNode->_findVisibleNodes();
+}
+
+void scSceneManager::_PrepareRenderQueue()
+{
+	mRenderQueue.clear();
+}

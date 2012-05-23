@@ -201,7 +201,7 @@ bool scRenderSystem::_LoadScene()
 
 	scEntity* ent = mSceneManager.CreateEntity("test", "basicshape");
 	six->AttachObject(ent);
-	mSceneManager.CreateSceneNode("7", five);
+	ent = mSceneManager.CreateEntity("test1", "basicshape");
 
 	// ≤‚ ‘°£°£°£
 	// const buffers

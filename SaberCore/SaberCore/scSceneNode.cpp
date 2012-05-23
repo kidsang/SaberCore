@@ -6,7 +6,7 @@ scSceneNode::scSceneNode(scSceneManager* creator, const std::string& name, scSce
 	mOrientation(XMFLOAT4(0.f, 0.f, 0.f, 1.f)), 
 	mPosition(XMFLOAT3(0.f, 0.f, 0.f)), 
 	mScale(XMFLOAT3(1.f, 1.f, 1.f)),
-	mNeedUpdate(true)
+	mNeedUpdate(true), mVisible(true)
 {
 	// mSceneManager 应该永远不为NULL
 
@@ -147,4 +147,107 @@ void scSceneNode::ChangeParent( scSceneNode* newParent )
 
 	mParent->_RemoveChild(this);
 	newParent->_AddChild(this);
+}
+
+void scSceneNode::AttachObject( scMovable* object )
+{
+	mObjects.push_back(object);
+}
+
+void scSceneNode::DetachObject( scMovable* object )
+{
+	auto iter = find(mObjects.begin(), mObjects.end(), object);
+	if (iter != mObjects.end())
+		mObjects.erase(iter);
+	else
+		scErrMsg("!!!Scene node " + mName + " don't have child object " + object->GetName());
+}
+
+scMovable* scSceneNode::DetachObject( unsigned int index )
+{
+	if (index > mObjects.size())
+	{
+		scErrMsg("!!!Index out of range when detaching scene node " + mName + "'s object");
+		return NULL;
+	}
+	auto iter = mObjects.begin();
+	iter += index;
+
+	scMovable* mo = (*iter);
+
+	mObjects.erase(iter);
+
+	return mo;
+}
+
+scMovable* scSceneNode::DetachObject( const std::string& name )
+{
+	scMovable* object = mSceneManager->GetObject(name);
+
+	if (object == NULL)
+	{
+		scErrMsg("!!!Can not find movable object named " + name);
+		return NULL;
+	}
+
+	DetachObject(object);
+	return object;
+}
+
+scMovable* scSceneNode::GetObject( unsigned int index )
+{
+	if (index > mObjects.size())
+	{
+		scErrMsg("!!!Index out of range when getting scene node " + mName + "'s object");
+		return NULL;
+	}
+	return mObjects.at(index);
+}
+
+scMovable* scSceneNode::GetObject( const std::string& name )
+{
+	scMovable* object = mSceneManager->GetObject(name);
+
+	if (object == NULL)
+	{
+		scErrMsg("!!!Can not find movable object named " + name);
+		return NULL;
+	}
+	auto iter = find(mObjects.begin(), mObjects.end(), object);
+	if (iter != mObjects.end())
+		return (*iter);
+	else
+	{
+		scErrMsg("!!!Scene node " + mName + " don't have child object " + object->GetName());
+		return NULL;
+	}
+}
+
+void scSceneNode::_findVisibleNodes()
+{
+	// 自身不可见
+	if (!mVisible)
+		return;
+
+	// TODO: 使用Bounding box判断可见性
+
+	// 寻找自身的可见物体，并向下递归
+	for (auto iter = mChildren.begin(); iter != mChildren.end(); ++iter)
+	{
+		_findVisibleObjects();
+		_findVisibleNodes();
+	}
+}
+
+void scSceneNode::_findVisibleObjects()
+{
+	for (auto iter = mObjects.begin(); iter != mObjects.end(); ++iter)
+	{
+		if (!(*iter)->IsVisible())
+			continue;
+
+		// TODO: 根据自身bounding box判断自身可见性
+
+		(*iter)->_UpdateRenderQueue(mSceneManager->GetRenderQueue());
+	}
 }

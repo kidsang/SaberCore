@@ -13,6 +13,10 @@
 #include <algorithm>
 #include "scError.h"
 
+// win gdi 也有一个同名的宏
+#undef GetObjectW
+#undef GetObject
+
 /// 场景管理类的声明.
 /// 由于我已经在scSceneManager中include了scSceneNode的头文件
 /// 因此我不能在这里include scSceneManager的头文件
@@ -58,6 +62,9 @@ private:
 	/// 更新缓存标志
 	bool mNeedUpdate;				
 
+	/// 该节点及其所属子节点的可见性
+	bool mVisible;
+
 public:
 	
 	/// 构造函数. 
@@ -95,70 +102,43 @@ public:
 
 	/// 在节点上挂载物体
 	/// @param object 需要挂载的物体
-	void AttachObject(scMovable* object)
-	{
-		mObjects.push_back(object);
-	}
+	void AttachObject(scMovable* object);
 
 	/// 将物体从节点摘除
 	/// @param object 需要摘除的物体
-	void DetachObject(scMovable* object)
-	{
-		auto iter = find(mObjects.begin(), mObjects.end(), object);
-		if (iter != mObjects.end())
-			mObjects.erase(iter);
-	}
+	void DetachObject(scMovable* object);
 
 	/// 将物体从节点摘除
 	/// @param index 需要摘除的物体的索引
-	scMovable* DetachObject(unsigned int index)
-	{
-		if (index > mObjects.size())
-		{
-			scErrMsg("!!!Index out of range when detaching scene node " + mName + "'s object");
-			return NULL;
-		}
-		auto iter = mObjects.begin();
-		iter += index;
-		mObjects.erase(iter);
-		
-		return (*iter);
-	}
+	scMovable* DetachObject(unsigned int index);
 
 	/// 将物体从节点摘除
-	/// @param index 需要摘除的物体的索引
-	scMovable* DetachObject(const std::string& name)
-	{
-		/*scMovable* object = mSceneManager->GetObject(name);
-
-		if (object != NULL)
-		{
-			DetachObject(object);
-			return object;
-		}*/
-
-		return NULL;
-	}
+	/// @param name 需要摘除的物体的名称
+	scMovable* DetachObject(const std::string& name);
 
 	/// 获得指定索引的物体
-	/// @param 物体的索引
-	scMovable* GetObject(unsigned int index)
-	{
-		if (index > mObjects.size())
-		{
-			scErrMsg("!!!Index out of range when getting scene node " + mName + "'s object");
-			return NULL;
-		}
-		return mObjects.at(index);
-	}
+	/// @param index 物体的索引
+	scMovable* GetObject(unsigned int index);
 
-	
+
+	/// 获得指定名称的物体
+	/// @param name 物体的名称
+	scMovable* GetObject(const std::string& name);
+ 
 	/// 重新计算继承自父节点的位置，旋转和缩放
 	void UpdateFromParent();
 	
 	/// 自顶向下地遍历父节点
 	/// 更新最终的变换矩阵
 	void UpdateInherited();
+
+	/// 递归地遍历所有子节点
+	/// 将可见的节点中的物体加入渲染队列
+	void _findVisibleNodes();
+
+	/// 遍历自身的movable object列表
+	/// 将可见物体加入渲染队列
+	void _findVisibleObjects();
 
 	// Get/Set
 public:
@@ -190,6 +170,18 @@ public:
 	const ChildrenList& GetChildren()
 	{
 		return mChildren;
+	}
+
+	/// 判断该节点及其所属子节点是否可见
+	bool IsVisible()
+	{
+		return mVisible;
+	}
+
+	/// 设置该节点及其所属子节点的可见性
+	void SetVisible(bool isVisible)
+	{
+		mVisible = isVisible;
 	}
  
 	/*/// 获取节点的朝向. 
