@@ -14,16 +14,15 @@ scEntity::~scEntity(void)
 {
 }
 
-scEntity* scEntityFactory::CreateInstance( scSceneManager* sceneMgr, const std::string& name, scNameValuePairList* params )
+scEntity* scEntityFactory::CreateInstance( scSceneManager* sceneMgr, const std::string& name, scNameValuePairList& params )
 {
-	std::string meshName = (*params->find("mesh")).second;
+	// mesh
+	std::string meshName = (*params.find("mesh")).second;
 	scMesh* mesh = scRenderSystem::GetMeshManager().GetResourcePtr(meshName);
+	// 默认vs
 	scVertexShader* vs = scRenderSystem::GetVertexShaderManager().GetResourcePtr("default");
+	// 默认ps
 	scPixelShader* ps = scRenderSystem::GetPixelShaderManager().GetResourcePtr("default");
-
-	// 负责清除该项
-	if (params)
-		delete params;
 
 	return new scEntity(sceneMgr, name, mesh, vs, ps);
 }

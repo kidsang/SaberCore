@@ -198,8 +198,10 @@ bool scRenderSystem::_LoadScene()
 	scSceneNode* five = mSceneManager.CreateSceneNode("5", four);
 	scSceneNode* six = mSceneManager.CreateSceneNode("6", five);
 	scSceneNode* seven = mSceneManager.CreateSceneNode("7", five);
-	five->ChangeParent(three);
-	mSceneManager.CreateSceneNode("5", root);
+
+	scEntity* ent = mSceneManager.CreateEntity("test", "basicshape");
+	six->AttachObject(ent);
+	mSceneManager.CreateSceneNode("7", five);
 
 	// ≤‚ ‘°£°£°£
 	// const buffers

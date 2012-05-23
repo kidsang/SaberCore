@@ -1,8 +1,9 @@
 #include "scMovable.h"
+#include "scSceneManager.h"
 
 
 scMovable::scMovable(scSceneManager* sceneManager, const std::string& name)
-	: mSceneManager(sceneManager), mName(name)
+	: mSceneManager(sceneManager), mName(name), mVisible(true)
 {
 }
 

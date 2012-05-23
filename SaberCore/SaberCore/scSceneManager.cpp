@@ -6,6 +6,11 @@ scSceneManager::scSceneManager(void)
 	scSceneNode* root = new scSceneNode(this, "root", NULL);
 	mSceneNodeMap["root"] = root;
 	mRootSceneNode = root;
+	
+	// 加入各种Movable Factory
+	scMovableFactory* mf;
+	mf = new scEntityFactory();
+	mObjectFactoryMap.insert(std::make_pair(mf->GetType(), mf));
 }
 
 
@@ -16,6 +21,9 @@ scSceneManager::~scSceneManager(void)
 		delete (*iter).second;
 	// 清空Movable Object列表
 	for (auto iter = mObjectMap.begin(); iter != mObjectMap.end(); ++iter)
+		delete (*iter).second;
+	// 清空Movable Object Factory列表
+	for (auto iter = mObjectFactoryMap.begin(); iter != mObjectFactoryMap.end(); ++iter)
 		delete (*iter).second;
 }
 
@@ -129,4 +137,34 @@ scMovable* scSceneManager::GetObject( const std::string& name )
 	}
 
 	return (*iter).second;
+}
+
+scMovable* scSceneManager::_CreateObject( const std::string& name, const std::string& factoryName, scNameValuePairList& params )
+{
+	if (_ObjectNameExist(name))
+	{
+		scErrMsg("!!!The name of movable object " + name + " is already exist.");
+		return NULL;
+	}
+
+	auto iter = mObjectFactoryMap.find(factoryName);
+	if (iter == mObjectFactoryMap.end())
+	{
+		scErrMsg("!!!Can not find factory named " + factoryName);
+		return NULL;
+	}
+
+	// 创建实例并加入列表
+	scMovable* mo = (*iter).second->CreateInstance(this, name, params);
+	mObjectMap.insert(std::make_pair(name, mo));
+
+	return mo;
+}
+
+scEntity* scSceneManager::CreateEntity( const std::string& name, const std::string& meshName )
+{
+	scNameValuePairList params;
+	params.insert(std::make_pair("mesh", meshName));
+
+	return static_cast<scEntity*>(_CreateObject(name, "entity", params));
 }

@@ -26,6 +26,14 @@ public:
 	~scEntity(void);
 
 
+	/// 更新渲染队列
+	/// @param queue 需要被更新的渲染队列
+	virtual void _UpdateRenderQueue(RenderQueue& queue)
+	{
+		// 将自己加入
+		queue.push_back(this);
+	}
+
 };
 
 /// 创建Entity的工厂类
@@ -43,7 +51,7 @@ public:
 	/// @param name 实体的名称
 	/// @param params 以键值对表示的参数列表
 	/// @return 返回创建好的实体,如果创建失败则返回NULL
-	virtual scEntity* CreateInstance( scSceneManager* sceneMgr, const std::string& name, scNameValuePairList* params );
+	virtual scEntity* CreateInstance( scSceneManager* sceneMgr, const std::string& name, scNameValuePairList& params );
 
 };
 
