@@ -16,6 +16,7 @@
 /// 因此我不能在这里include scSceneManager的头文件
 class scSceneManager;
 class scRenderable;
+class scSceneNode;
 
 /// 可挂载在SceneNode上的物体的抽象类
 class scMovable
@@ -25,6 +26,9 @@ private:
 	std::string mName;
 	/// 创建该物件的场景管理类
 	scSceneManager* mSceneManager;
+	/// 该物体所属的场景节点
+	/// 一个物体在同一时刻最对只能被一个场景节点所拥有
+	scSceneNode* mParentNode;
 
 	/// 描述该物件是否可见
 	bool mVisible;
@@ -53,6 +57,18 @@ public:
 	void SetVisible(bool isVisible)
 	{
 		mVisible = isVisible;
+	}
+
+	/// 设置物体所属的节点
+	void SetParentNode(scSceneNode* node)
+	{
+		mParentNode = node;
+	}
+
+	/// 获取物体所属的节点
+	scSceneNode* GetParentNode()
+	{
+		return mParentNode;
 	}
 
 	//TODO: 以后要把这个换成真正的RenderQueue类

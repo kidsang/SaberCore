@@ -250,6 +250,9 @@ void scRenderSystem::RenderOneFrame()
 
 void scRenderSystem::_Draw()
 {
+	// ≤‚ ‘
+	mSceneManager._RenderScene();
+
     unsigned int stride = sizeof( scVertex );
     unsigned int offset = 0;
 

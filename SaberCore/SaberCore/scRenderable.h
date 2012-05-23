@@ -29,8 +29,7 @@ private:
 	scPixelShader* mPixelShader;
 
 	/// 物体最终的变换矩阵
-	/// 由SceneManager设置
-	XMMATRIX mTransform;
+	XMFLOAT4X4 mTransform;
 
 public:
 	/// 构造函数
@@ -97,15 +96,15 @@ public:
 	}
 	
 	/// 设置物体的最终变换矩阵
-	/// 在物体被加入渲染队列时，由SceneManager负责调用
-	void _SetTransform(const XMMATRIX& transform)
+	/// 在物体被加入渲染队列时，由Movable的UpdateRenderQueue调用
+	void _SetTransform(const XMFLOAT4X4& transform)
 	{
 		mTransform = transform;
 	}
 
 	/// 获取物体的最终变换矩阵
-	/// 在物体被送入渲染管线前，由SceneManager负责调用
-	XMMATRIX _GetTransform()
+	/// 在物体被加入渲染队列时，由Movable的UpdateRenderQueue调用
+	const XMFLOAT4X4& _GetTransform()
 	{
 		return mTransform;
 	}

@@ -51,13 +51,16 @@ private:
 	XMFLOAT3 mScale;
 
 	/// 节点缓存的从父节点继承而来的朝向
-	XMVECTOR mDerivedOrientation;	
+	//XMVECTOR mDerivedOrientation;	
+	XMFLOAT4 mDerivedOrientation;
 	/// 节点缓存的从父节点继承而来的位置
-	XMVECTOR mDerivedPosition;		
+	//XMVECTOR mDerivedPosition;		
+	XMFLOAT3 mDerivedPosition;
 	/// 节点缓存的从父节点继承而来的缩放
-	XMVECTOR mDerivedScale;			
+	//XMVECTOR mDerivedScale;			
+	XMFLOAT3 mDerivedScale;
 	/// 节点缓存的从父节点继承而来变换矩阵
-	XMMATRIX mDerivedTransform;		
+	XMFLOAT4X4 mDerivedTransform;		
 
 	/// 更新缓存标志
 	bool mNeedUpdate;				
@@ -119,19 +122,11 @@ public:
 	/// 获得指定索引的物体
 	/// @param index 物体的索引
 	scMovable* GetObject(unsigned int index);
-
-
+ 
 	/// 获得指定名称的物体
 	/// @param name 物体的名称
 	scMovable* GetObject(const std::string& name);
  
-	/// 重新计算继承自父节点的位置，旋转和缩放
-	void UpdateFromParent();
-	
-	/// 自顶向下地遍历父节点
-	/// 更新最终的变换矩阵
-	void UpdateInherited();
-
 	/// 递归地遍历所有子节点
 	/// 将可见的节点中的物体加入渲染队列
 	void _findVisibleNodes();
@@ -139,6 +134,19 @@ public:
 	/// 遍历自身的movable object列表
 	/// 将可见物体加入渲染队列
 	void _findVisibleObjects();
+
+	/// 获取当前节点继承而来的世界矩阵
+	/// @note 如果缓存不是最新的，该函数将会先调用_UpdateInherited更新缓存
+	const XMFLOAT4X4& GetDerivedTransform();
+ 
+private:
+	/// 重新计算继承自父节点的位置，旋转和缩放
+	void _UpdateFromParent();
+	
+	/// 自顶向下地遍历父节点
+	/// 更新最终的变换矩阵
+	void _UpdateInherited();
+
 
 	// Get/Set
 public:
@@ -183,7 +191,7 @@ public:
 	{
 		mVisible = isVisible;
 	}
- 
+
 	/*/// 获取节点的朝向. 
 	const XMVECTOR GetOrientation() 
 	{ 
@@ -224,19 +232,19 @@ public:
 	}*/
 
 	/// 获取当前缓存的继承自父节点的朝向
-	const XMVECTOR _GetDerivedOrientation()
+	const XMFLOAT4& _GetDerivedOrientation()
 	{
 		return mDerivedOrientation;
 	}
 
 	/// 获取当前缓存的继承自父节点的位置
-	const XMVECTOR _GetDerivedPosition()
+	const XMFLOAT3& _GetDerivedPosition()
 	{
 		return mDerivedPosition;
 	}
 	
 	/// 获取当前缓存的继承自父节点的缩放
-	const XMVECTOR _GetDerivedScale()
+	const XMFLOAT3& _GetDerivedScale()
 	{
 		return mDerivedScale;
 	}

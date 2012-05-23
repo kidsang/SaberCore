@@ -79,31 +79,43 @@ bool scSceneNode::HasChild( scSceneNode* node )
 	return (iter != mChildren.end());
 }
 
-void scSceneNode::UpdateFromParent()
+void scSceneNode::_UpdateFromParent()
 {
-	mDerivedOrientation = XMLoadFloat4(&mOrientation);
-	mDerivedPosition = XMVectorSet(mPosition.x, mPosition.y, mPosition.z, 1.0f);
-	mDerivedScale = XMVectorSet(mScale.x, mScale.y, mScale.z, 1.0f);
+	mDerivedOrientation = mOrientation;
+	mDerivedPosition = mPosition;
+	mDerivedScale = mScale;
+
+	XMVECTOR ori = XMLoadFloat4(&mDerivedOrientation);
+	XMVECTOR pos = XMLoadFloat3(&mDerivedPosition);
+	XMVECTOR sca = XMLoadFloat3(&mDerivedScale);
+
 
 	// 根节点没有父亲
 	// 虽然说根节点不会改变位置，不过以防万一
 	if (mParent)
 	{
-		mDerivedOrientation = XMQuaternionMultiply(mParent->_GetDerivedOrientation(), mDerivedOrientation);
-		mDerivedPosition = XMVectorAdd(mDerivedPosition, mParent->_GetDerivedPosition());
-		mDerivedScale = XMVectorMultiply(mDerivedScale, mParent->_GetDerivedScale());
+		XMVECTOR oriPar = XMLoadFloat4(&mParent->_GetDerivedOrientation());
+		XMVECTOR posPar = XMLoadFloat3(&mParent->_GetDerivedPosition());
+		XMVECTOR scaPar = XMLoadFloat3(&mParent->_GetDerivedScale());
+		ori = XMQuaternionMultiply(oriPar, ori);
+		pos = XMVectorAdd(posPar, pos);
+		sca = XMVectorMultiply(scaPar, sca);
+		XMStoreFloat4(&mDerivedOrientation, ori);
+		XMStoreFloat3(&mDerivedPosition, pos);
+		XMStoreFloat3(&mDerivedScale, sca);
 	}
 
 	// 更新变换矩阵
 	// scale -> rotate -> translate
-	mDerivedTransform = XMMatrixTransformation(XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f), XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
-		mDerivedScale, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f), mDerivedOrientation, mDerivedPosition);
-
+	XMMATRIX mat = XMMatrixTransformation(XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f), XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
+		sca, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f), ori, pos);
+	XMStoreFloat4x4(&mDerivedTransform, mat);
+	
 	// 更新结束
 	mNeedUpdate = false;
 }
 
-void scSceneNode::UpdateInherited()
+void scSceneNode::_UpdateInherited()
 {
 	if (!mNeedUpdate)
 		return;
@@ -123,7 +135,7 @@ void scSceneNode::UpdateInherited()
 	auto riter = updateStack.rbegin();
 	while (riter != updateStack.rend())
 	{
-		(*riter)->UpdateFromParent();
+		(*riter)->_UpdateFromParent();
 		++riter;
 	}
 }
@@ -152,13 +164,17 @@ void scSceneNode::ChangeParent( scSceneNode* newParent )
 void scSceneNode::AttachObject( scMovable* object )
 {
 	mObjects.push_back(object);
+	object->SetParentNode(this);
 }
 
 void scSceneNode::DetachObject( scMovable* object )
 {
 	auto iter = find(mObjects.begin(), mObjects.end(), object);
 	if (iter != mObjects.end())
+	{
+		(*iter)->SetParentNode(NULL);
 		mObjects.erase(iter);
+	}
 	else
 		scErrMsg("!!!Scene node " + mName + " don't have child object " + object->GetName());
 }
@@ -170,12 +186,12 @@ scMovable* scSceneNode::DetachObject( unsigned int index )
 		scErrMsg("!!!Index out of range when detaching scene node " + mName + "'s object");
 		return NULL;
 	}
+
 	auto iter = mObjects.begin();
 	iter += index;
 
 	scMovable* mo = (*iter);
-
-	mObjects.erase(iter);
+	DetachObject(mo);
 
 	return mo;
 }
@@ -213,6 +229,7 @@ scMovable* scSceneNode::GetObject( const std::string& name )
 		scErrMsg("!!!Can not find movable object named " + name);
 		return NULL;
 	}
+
 	auto iter = find(mObjects.begin(), mObjects.end(), object);
 	if (iter != mObjects.end())
 		return (*iter);
@@ -232,11 +249,9 @@ void scSceneNode::_findVisibleNodes()
 	// TODO: 使用Bounding box判断可见性
 
 	// 寻找自身的可见物体，并向下递归
+	_findVisibleObjects();
 	for (auto iter = mChildren.begin(); iter != mChildren.end(); ++iter)
-	{
-		_findVisibleObjects();
-		_findVisibleNodes();
-	}
+		(*iter)->_findVisibleNodes();
 }
 
 void scSceneNode::_findVisibleObjects()
@@ -247,7 +262,14 @@ void scSceneNode::_findVisibleObjects()
 			continue;
 
 		// TODO: 根据自身bounding box判断自身可见性
-
+		//(*iter)->
 		(*iter)->_UpdateRenderQueue(mSceneManager->GetRenderQueue());
 	}
+}
+
+const XMFLOAT4X4& scSceneNode::GetDerivedTransform()
+{
+	if (mNeedUpdate)
+		_UpdateInherited();
+	return mDerivedTransform;
 }

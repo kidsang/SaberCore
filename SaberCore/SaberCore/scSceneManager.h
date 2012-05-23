@@ -87,7 +87,7 @@ public:
 
 	/// 渲染场景
 	/// 遍历场景树并将渲染对象加入渲染队列
-	void RenderScene();
+	void _RenderScene();
 
 	/// 准备渲染队列
 	void _PrepareRenderQueue();

@@ -169,7 +169,7 @@ scEntity* scSceneManager::CreateEntity( const std::string& name, const std::stri
 	return static_cast<scEntity*>(_CreateObject(name, "entity", params));
 }
 
-void scSceneManager::RenderScene()
+void scSceneManager::_RenderScene()
 {
 	// 准备渲染队列
 	_PrepareRenderQueue();
