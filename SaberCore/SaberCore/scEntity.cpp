@@ -22,7 +22,7 @@ void scEntity::_UpdateRenderQueue(scSceneNode* node, RenderQueue& queue )
 	// 将自己加入
 	// 由于支持同一个entity被多个SceneNode共用
 	// 因此要先复制一份
-	queue.push_back(scRenderable(*this));
+	queue.push_back(*this);
 }
 
 scEntity* scEntityFactory::CreateInstance( scSceneManager* sceneMgr, const std::string& name, scNameValuePairList& params )
