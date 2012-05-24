@@ -27,4 +27,5 @@ float inline scConvertToFloat(const std::string& str)
 	return (float)atof(str.c_str());
 }
 
+
 #endif // scCommon_h__

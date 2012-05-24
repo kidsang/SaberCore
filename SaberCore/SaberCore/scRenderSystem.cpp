@@ -205,11 +205,13 @@ bool scRenderSystem::_LoadScene()
 
 	six->SetPosition(0, 0, -50);
 	four->SetPosition(10, 0, 0);
-	XMVECTOR rotvec = XMQuaternionRotationRollPitchYaw(0.57, 0, 0);
+	XMVECTOR rotvec = XMQuaternionRotationRollPitchYaw(0.57f, 0, 0);
 	XMFLOAT4 rot;
 	XMStoreFloat4(&rot, rotvec);
 	six->SetOrientation(rot);
 	six->SetScale(1, 2, 1);
+	seven->AttachObject(ent);
+	seven->SetPosition(-20, 10, -50);
 
 	// 测试。。。
 	// const buffers
@@ -280,15 +282,12 @@ void scRenderSystem::_Draw()
 	mContext->VSSetConstantBuffers( 2, 1, &projCB_ );
 
 	// 遍历渲染列表
-	scRenderable* ro;
-	auto iter = mSceneManager.GetRenderQueue().begin();
-	while (iter != mSceneManager.GetRenderQueue().end())
+	auto roIter = mSceneManager.GetRenderQueue().begin();
+	while (roIter != mSceneManager.GetRenderQueue().end())
 	{
-		ro = (*iter);
-
-		scMesh* mesh = ro->GetMesh();
-		scVertexShader* vs = ro->GetVertexShader();
-		scPixelShader* ps = ro->GetPixelShader();
+		scMesh* mesh = roIter->GetMesh();
+		scVertexShader* vs = roIter->GetVertexShader();
+		scPixelShader* ps = roIter->GetPixelShader();
 
 		ID3D11Buffer* meshBuf = mesh->GetMeshBufferPtr();
 		mContext->IASetVertexBuffers(0, 1, &meshBuf, &stride, &offset);
@@ -298,10 +297,10 @@ void scRenderSystem::_Draw()
 		mContext->IASetInputLayout(vs->GetInputLayout());
 
 		mContext->PSSetShader(ps->GetShaderDataPtr(), 0, 0);
-		if (!ro->GetTextures().empty())
+		if (!roIter->GetTextures().empty())
 		{
-			auto texIter = ro->GetTextures().begin();
-			while (texIter != ro->GetTextures().end())
+			auto texIter = roIter->GetTextures().begin();
+			while (texIter != roIter->GetTextures().end())
 			{
 				ID3D11ShaderResourceView* tex = (*texIter)->GetTextureDataPtr();
 				//TODO: 不知道这样做多重纹理会不会有问题
@@ -310,14 +309,14 @@ void scRenderSystem::_Draw()
 			}
 		}
 
-		XMMATRIX worldMat = XMLoadFloat4x4(&ro->_GetTransform());
+		XMMATRIX worldMat = XMLoadFloat4x4(&roIter->_GetTransform());
 		worldMat = XMMatrixTranspose( worldMat ); 
 		mContext->UpdateSubresource( worldCB_, 0, 0, &worldMat, 0, 0 ); 
 		mContext->VSSetConstantBuffers( 0, 1, &worldCB_ );
 
 		mContext->Draw( mesh->GetVertexCount(), 0 );
 
-		++iter;
+		++roIter;
 	}
 
     /*mContext->IASetInputLayout(mVertexShaderManager.GetResourcePtr("default")->GetInputLayout());

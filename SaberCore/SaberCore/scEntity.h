@@ -29,14 +29,7 @@ public:
 
 	/// 更新渲染队列
 	/// @param queue 需要被更新的渲染队列
-	virtual void _UpdateRenderQueue(RenderQueue& queue)
-	{
-		//SetTransform(XMMatrixIdentity());
-		// 更新自己的世界矩阵
-		_SetTransform(GetParentNode()->GetDerivedTransform());
-		// 将自己加入
-		queue.push_back(this);
-	}
+	virtual void _UpdateRenderQueue(scSceneNode* node, RenderQueue& queue);
 
 };
 

@@ -20,13 +20,15 @@
 #undef GetObjectW
 #undef GetObject
 
+//TODO: 以后要把这个换成真正的RenderQueue类
+typedef std::vector<scRenderable> RenderQueue;
+
 /// 场景管理类
 class scSceneManager
 {
 	typedef std::hash_map<std::string, scSceneNode*> SceneNodeMap;
 	typedef std::hash_map<std::string, scMovable*> ObjectMap;
 	typedef std::hash_map<std::string, scMovableFactory*> ObjectFactoryMap;
-	typedef std::vector<scRenderable*> RenderQueue;
 
 private:
 	/// 场景根节点，该节点是只读的

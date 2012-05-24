@@ -164,7 +164,7 @@ void scSceneNode::ChangeParent( scSceneNode* newParent )
 void scSceneNode::AttachObject( scMovable* object )
 {
 	mObjects.push_back(object);
-	object->SetParentNode(this);
+	//object->SetParentNode(this);
 }
 
 void scSceneNode::DetachObject( scMovable* object )
@@ -172,7 +172,7 @@ void scSceneNode::DetachObject( scMovable* object )
 	auto iter = find(mObjects.begin(), mObjects.end(), object);
 	if (iter != mObjects.end())
 	{
-		(*iter)->SetParentNode(NULL);
+		//(*iter)->SetParentNode(NULL);
 		mObjects.erase(iter);
 	}
 	else
@@ -263,7 +263,7 @@ void scSceneNode::_findVisibleObjects()
 
 		// TODO: 根据自身bounding box判断自身可见性
 		//(*iter)->
-		(*iter)->_UpdateRenderQueue(mSceneManager->GetRenderQueue());
+		(*iter)->_UpdateRenderQueue(this, mSceneManager->GetRenderQueue());
 	}
 }
 

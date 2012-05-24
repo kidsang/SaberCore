@@ -18,6 +18,9 @@ class scSceneManager;
 class scRenderable;
 class scSceneNode;
 
+//TODO: 以后要把这个换成真正的RenderQueue类
+typedef std::vector<scRenderable> RenderQueue;
+
 /// 可挂载在SceneNode上的物体的抽象类
 class scMovable
 {
@@ -28,7 +31,7 @@ private:
 	scSceneManager* mSceneManager;
 	/// 该物体所属的场景节点
 	/// 一个物体在同一时刻最对只能被一个场景节点所拥有
-	scSceneNode* mParentNode;
+	//scSceneNode* mParentNode;
 
 	/// 描述该物件是否可见
 	bool mVisible;
@@ -40,6 +43,10 @@ public:
 	/// @note Movable 必须由SceneManager而不是用户来创建
 	scMovable(scSceneManager* sceneManager, const std::string& name);
 	virtual ~scMovable(void);
+
+	/// 克隆，返回一个精确复制的副本
+	/// @param newName 复制出来的物体的新名字
+	///virtual scMovable* Clone(const std::string& newName) = 0;
 
 	/// 返回该物件的名字
 	const std::string GetName()
@@ -59,7 +66,7 @@ public:
 		mVisible = isVisible;
 	}
 
-	/// 设置物体所属的节点
+	/*/// 设置物体所属的节点
 	void SetParentNode(scSceneNode* node)
 	{
 		mParentNode = node;
@@ -69,14 +76,13 @@ public:
 	scSceneNode* GetParentNode()
 	{
 		return mParentNode;
-	}
+	}*/
 
-	//TODO: 以后要把这个换成真正的RenderQueue类
-	typedef std::vector<scRenderable*> RenderQueue;
 	/// 更新渲染队列
 	/// 如果Movable自身同时是Renderable，则将自身加入渲染队列
 	/// @param queue 需要被更新的渲染队列
-	virtual void _UpdateRenderQueue(RenderQueue& queue) = 0;
+	/// @param node 物体的所属节点
+	virtual void _UpdateRenderQueue(scSceneNode* node, RenderQueue& queue) = 0;
 };
 
 /// Movable Object 工厂类

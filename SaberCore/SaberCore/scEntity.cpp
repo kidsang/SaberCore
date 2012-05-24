@@ -14,6 +14,17 @@ scEntity::~scEntity(void)
 {
 }
 
+void scEntity::_UpdateRenderQueue(scSceneNode* node, RenderQueue& queue )
+{
+	//SetTransform(XMMatrixIdentity());
+	// 更新自己的世界矩阵
+	_SetTransform(node->GetDerivedTransform());
+	// 将自己加入
+	// 由于支持同一个entity被多个SceneNode共用
+	// 因此要先复制一份
+	queue.push_back(scRenderable(*this));
+}
+
 scEntity* scEntityFactory::CreateInstance( scSceneManager* sceneMgr, const std::string& name, scNameValuePairList& params )
 {
 	// mesh
