@@ -72,6 +72,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="scArchiveLoader.cpp" />
+    <ClCompile Include="scCamera.cpp" />
     <ClCompile Include="scEntity.cpp" />
     <ClCompile Include="scMesh.cpp" />
     <ClCompile Include="scMovable.cpp" />
@@ -85,10 +86,12 @@
     <ClCompile Include="scShader.cpp" />
     <ClCompile Include="scTexture.cpp" />
     <ClCompile Include="scVertexShader.cpp" />
+    <ClCompile Include="scViewport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="objLoader.h" />
     <ClInclude Include="scArchiveLoader.h" />
+    <ClInclude Include="scCamera.h" />
     <ClInclude Include="scCommon.h" />
     <ClInclude Include="scEntity.h" />
     <ClInclude Include="scError.h" />
@@ -106,6 +109,7 @@
     <ClInclude Include="scTexture.h" />
     <ClInclude Include="scVertex.h" />
     <ClInclude Include="scVertexShader.h" />
+    <ClInclude Include="scViewport.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\res\effect\Lighting.fx" />

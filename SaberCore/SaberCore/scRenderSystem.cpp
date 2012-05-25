@@ -203,15 +203,12 @@ bool scRenderSystem::_LoadScene()
 	ent->AddTexture(mTextureManager.GetResourcePtr("saber"));
 	six->AttachObject(ent);
 
-	six->SetPosition(0, 0, -50);
-	four->SetPosition(10, 0, 0);
+	six->SetPosition(20, 20, 20);
 	XMVECTOR rotvec = XMQuaternionRotationRollPitchYaw(0.57f, 0, 0);
 	XMFLOAT4 rot;
 	XMStoreFloat4(&rot, rotvec);
 	six->SetOrientation(rot);
-	six->SetScale(1, 2, 1);
-	seven->AttachObject(ent);
-	seven->SetPosition(-20, 10, -50);
+	//seven->AttachObject(ent);
 
 	// ²âÊÔ¡£¡£¡£
 	// const buffers
@@ -270,13 +267,13 @@ void scRenderSystem::_Draw()
 	mContext->PSSetSamplers(0, 1, &mSampler);
 
 	// ÊÓ¾ØÕó(ÉãÏñ»ú¾ØÕó)
-	XMMATRIX viewMat = XMMatrixLookAtLH(XMVectorSet(0, 0, 50, 1), XMVectorSet(0, 0, 0, 1), XMVectorSet(0, 1, 0, 1));
+	XMMATRIX viewMat = XMMatrixLookAtRH(XMVectorSet(0, 0, 100, 1), XMVectorSet(0, 0, 0, 1), XMVectorSet(0, 1, 0, 1));
 	viewMat = XMMatrixTranspose( viewMat );
 	mContext->UpdateSubresource( viewCB_, 0, 0, &viewMat, 0, 0 );
 	mContext->VSSetConstantBuffers( 1, 1, &viewCB_ );
 
 	// Í¶Ó°¾ØÕó(viewportÏà¹Ø)
-	XMMATRIX projMat = XMMatrixPerspectiveFovLH( XM_PIDIV4, 500.f / 500.0f, 0.01f, 1000.0f );
+	XMMATRIX projMat = XMMatrixPerspectiveFovRH( XM_PIDIV4, 500.f / 500.0f, 0.01f, 1000.0f );
 	projMat = XMMatrixTranspose( projMat );
 	mContext->UpdateSubresource( projCB_, 0, 0, &projMat, 0, 0 );
 	mContext->VSSetConstantBuffers( 2, 1, &projCB_ );

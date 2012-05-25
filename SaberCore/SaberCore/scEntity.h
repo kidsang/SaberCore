@@ -29,6 +29,7 @@ public:
 
 	/// 更新渲染队列
 	/// @param queue 需要被更新的渲染队列
+	/// @param node 物体的所属节点
 	virtual void _UpdateRenderQueue(scSceneNode* node, RenderQueue& queue);
 
 };

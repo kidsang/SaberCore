@@ -66,6 +66,12 @@
     <ClCompile Include="scEntity.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="scViewport.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="scCamera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scRenderSystem.h">
@@ -123,6 +129,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="scCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="scViewport.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="scCamera.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
