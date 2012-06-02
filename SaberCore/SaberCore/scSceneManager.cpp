@@ -25,6 +25,13 @@ scSceneManager::~scSceneManager(void)
 	// 清空Movable Object Factory列表
 	for (auto iter = mObjectFactoryMap.begin(); iter != mObjectFactoryMap.end(); ++iter)
 		delete (*iter).second;
+	// 清空camera列表
+	for (auto iter = mCameraMap.begin(); iter != mCameraMap.end(); ++iter)
+		delete (*iter).second;
+	// 清空viewport列表
+	for (auto iter = mViewportList.begin(); iter != mViewportList.end(); ++iter)
+		delete (*iter);
+
 }
 
 scSceneNode* scSceneManager::GetSceneNode( const std::string& name )
@@ -181,4 +188,51 @@ void scSceneManager::_RenderScene()
 void scSceneManager::_PrepareRenderQueue()
 {
 	mRenderQueue.clear();
+}
+
+scViewport* scSceneManager::CreateViewport( float width, float height, float posX, float posY )
+{
+	scViewport* vp = new scViewport(width, height, posX, posY);
+	mViewportList.push_back(vp);
+
+	return vp;
+}
+
+scViewport* scSceneManager::GetViewport( unsigned int index )
+{
+	if (index >= mViewportList.size())
+	{
+		scErrMsg("!!!Index out of range at GetViewport().");
+		return NULL;
+	}
+
+	return mViewportList.at(index);
+}
+
+scCamera* scSceneManager::CreateCamera( const std::string& name )
+{
+	// 首先判断名称是否冲突
+	auto iter = mCameraMap.find(name);
+	if (iter != mCameraMap.end())
+	{
+		scErrMsg("!!!Camera name " + name + "exist, please change another name.");
+		return NULL;
+	}
+
+	scCamera * camera = new scCamera(this, name);
+	mCameraMap.insert(std::make_pair(name, camera));
+
+	return camera;
+}
+
+scCamera* scSceneManager::GetCamera( const std::string& name )
+{
+	auto iter = mCameraMap.find(name);
+	if (iter == mCameraMap.end())
+	{
+		scErrMsg("!!!Camera named " + name + "do not exist.");
+		return NULL;
+	}
+
+	return (*iter).second;
 }

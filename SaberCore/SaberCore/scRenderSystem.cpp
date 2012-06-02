@@ -24,6 +24,8 @@ scRenderSystem::~scRenderSystem(void)
 bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 {
 	mHwnd = hwnd;
+	mWindowWidth = width;
+	mWindowHeight = height;
     HRESULT hr;
 	
 	// 创建设备
@@ -136,15 +138,14 @@ bool scRenderSystem::Initialize( HWND hwnd, int width, int height )
 
 	// 设置viewport
 
-	D3D11_VIEWPORT viewport;
+	/*D3D11_VIEWPORT viewport;
 	viewport.Width = static_cast<float>(width);
 	viewport.Height = static_cast<float>(height);
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
-
-	mContext->RSSetViewports(1, &viewport);
+	mContext->RSSetViewports(1, &viewport);*/
 
 	// 初始化各种manager
 	mTextureManager.Initialize(mDevice);
@@ -203,12 +204,19 @@ bool scRenderSystem::_LoadScene()
 	ent->AddTexture(mTextureManager.GetResourcePtr("saber"));
 	six->AttachObject(ent);
 
-	six->SetPosition(20, 20, 20);
-	XMVECTOR rotvec = XMQuaternionRotationRollPitchYaw(0.57f, 0, 0);
-	XMFLOAT4 rot;
-	XMStoreFloat4(&rot, rotvec);
-	six->SetOrientation(rot);
+	//XMVECTOR rotvec = XMQuaternionRotationRollPitchYaw(0.57f, 0, 0);
+	//XMFLOAT4 rot;
+	//XMStoreFloat4(&rot, rotvec);
+	//six->SetOrientation(rot);
 	//seven->AttachObject(ent);
+
+	// 测试viewport和摄像机
+	scViewport* vp = mSceneManager.CreateViewport((float)mWindowWidth, (float)mWindowHeight, 0, 0);
+	scCamera* camera = mSceneManager.CreateCamera("camera");
+	camera->SetPosition(XMFLOAT3(0, 50, 100));
+	camera->SetLookAt(XMFLOAT3(0, 0, 0));
+	vp->SetCamera(camera);
+	seven->AttachObject(camera);
 
 	// 测试。。。
 	// const buffers
@@ -257,98 +265,78 @@ void scRenderSystem::RenderOneFrame()
 
 void scRenderSystem::_Draw()
 {
-	// 测试
-	mSceneManager._RenderScene();
-
-    unsigned int stride = sizeof( scVertex );
-    unsigned int offset = 0;
-
-	// sampler
-	mContext->PSSetSamplers(0, 1, &mSampler);
-
-	// 视矩阵(摄像机矩阵)
-	XMMATRIX viewMat = XMMatrixLookAtRH(XMVectorSet(0, 0, 100, 1), XMVectorSet(0, 0, 0, 1), XMVectorSet(0, 1, 0, 1));
-	viewMat = XMMatrixTranspose( viewMat );
-	mContext->UpdateSubresource( viewCB_, 0, 0, &viewMat, 0, 0 );
-	mContext->VSSetConstantBuffers( 1, 1, &viewCB_ );
-
-	// 投影矩阵(viewport相关)
-	XMMATRIX projMat = XMMatrixPerspectiveFovRH( XM_PIDIV4, 500.f / 500.0f, 0.01f, 1000.0f );
-	projMat = XMMatrixTranspose( projMat );
-	mContext->UpdateSubresource( projCB_, 0, 0, &projMat, 0, 0 );
-	mContext->VSSetConstantBuffers( 2, 1, &projCB_ );
-
-	// 遍历渲染列表
-	auto roIter = mSceneManager.GetRenderQueue().begin();
-	while (roIter != mSceneManager.GetRenderQueue().end())
+	auto vpIter = mSceneManager.GetViewports().begin();
+	for (; vpIter != mSceneManager.GetViewports().end(); ++vpIter)
 	{
-		scMesh* mesh = roIter->GetMesh();
-		scVertexShader* vs = roIter->GetVertexShader();
-		scPixelShader* ps = roIter->GetPixelShader();
+		scViewport* vp = (*vpIter);
+		// 不渲染不可见的viewport
+		if (!vp->IsVisible())
+			continue;
+		// 设置当前viewport
+		mContext->RSSetViewports(1, &vp->GetViewport());
 
-		ID3D11Buffer* meshBuf = mesh->GetMeshBufferPtr();
-		mContext->IASetVertexBuffers(0, 1, &meshBuf, &stride, &offset);
-		mContext->IASetPrimitiveTopology(mesh->GetTopology());
+		// 投影矩阵(viewport相关)
+		//XMMATRIX projMat = XMMatrixPerspectiveFovRH( XM_PIDIV4, 500.f / 500.0f, 0.01f, 1000.0f );
+		XMMATRIX projMat = XMLoadFloat4x4(&vp->GetProjectionMatrix());
+		projMat = XMMatrixTranspose( projMat );
+		mContext->UpdateSubresource( projCB_, 0, 0, &projMat, 0, 0 );
+		mContext->VSSetConstantBuffers( 2, 1, &projCB_ );
 
-		mContext->VSSetShader(vs->GetShaderDataPtr(), 0, 0);
-		mContext->IASetInputLayout(vs->GetInputLayout());
+		// 视矩阵(摄像机矩阵)
+		//XMMATRIX viewMat = XMMatrixLookAtRH(XMVectorSet(0, 0, 100, 1), XMVectorSet(0, 0, 0, 1), XMVectorSet(0, 1, 0, 1));
+		XMMATRIX viewMat = XMLoadFloat4x4(&vp->GetCamera()->GetViewMatrix());
+		viewMat = XMMatrixTranspose( viewMat );
+		mContext->UpdateSubresource( viewCB_, 0, 0, &viewMat, 0, 0 );
+		mContext->VSSetConstantBuffers( 1, 1, &viewCB_ );
 
-		mContext->PSSetShader(ps->GetShaderDataPtr(), 0, 0);
-		if (!roIter->GetTextures().empty())
+		// 测试
+		mSceneManager._RenderScene();
+
+		unsigned int stride = sizeof( scVertex );
+		unsigned int offset = 0;
+
+		// sampler
+		mContext->PSSetSamplers(0, 1, &mSampler);
+
+
+		// 遍历渲染列表
+		auto roIter = mSceneManager.GetRenderQueue().begin();
+		while (roIter != mSceneManager.GetRenderQueue().end())
 		{
-			auto texIter = roIter->GetTextures().begin();
-			while (texIter != roIter->GetTextures().end())
+			scMesh* mesh = roIter->GetMesh();
+			scVertexShader* vs = roIter->GetVertexShader();
+			scPixelShader* ps = roIter->GetPixelShader();
+
+			ID3D11Buffer* meshBuf = mesh->GetMeshBufferPtr();
+			mContext->IASetVertexBuffers(0, 1, &meshBuf, &stride, &offset);
+			mContext->IASetPrimitiveTopology(mesh->GetTopology());
+
+			mContext->VSSetShader(vs->GetShaderDataPtr(), 0, 0);
+			mContext->IASetInputLayout(vs->GetInputLayout());
+
+			mContext->PSSetShader(ps->GetShaderDataPtr(), 0, 0);
+			if (!roIter->GetTextures().empty())
 			{
-				ID3D11ShaderResourceView* tex = (*texIter)->GetTextureDataPtr();
-				//TODO: 不知道这样做多重纹理会不会有问题
-				mContext->PSSetShaderResources(0, 1, &tex);
-				++texIter;
+				auto texIter = roIter->GetTextures().begin();
+				while (texIter != roIter->GetTextures().end())
+				{
+					ID3D11ShaderResourceView* tex = (*texIter)->GetTextureDataPtr();
+					//TODO: 不知道这样做多重纹理会不会有问题
+					mContext->PSSetShaderResources(0, 1, &tex);
+					++texIter;
+				}
 			}
+
+			XMMATRIX worldMat = XMLoadFloat4x4(&roIter->_GetTransform());
+			worldMat = XMMatrixTranspose( worldMat ); 
+			mContext->UpdateSubresource( worldCB_, 0, 0, &worldMat, 0, 0 ); 
+			mContext->VSSetConstantBuffers( 0, 1, &worldCB_ );
+
+			mContext->Draw( mesh->GetVertexCount(), 0 );
+
+			++roIter;
 		}
-
-		XMMATRIX worldMat = XMLoadFloat4x4(&roIter->_GetTransform());
-		worldMat = XMMatrixTranspose( worldMat ); 
-		mContext->UpdateSubresource( worldCB_, 0, 0, &worldMat, 0, 0 ); 
-		mContext->VSSetConstantBuffers( 0, 1, &worldCB_ );
-
-		mContext->Draw( mesh->GetVertexCount(), 0 );
-
-		++roIter;
 	}
-
-    /*mContext->IASetInputLayout(mVertexShaderManager.GetResourcePtr("default")->GetInputLayout());
-	scMesh* mesh = mMeshManager.GetResourcePtr("basicshape");
-	ID3D11Buffer* buff = mesh->GetMeshBufferPtr();
-    mContext->IASetVertexBuffers( 0, 1, &buff, &stride, &offset );
-    mContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-
-	ID3D11VertexShader* vs = mVertexShaderManager.GetResourcePtr("default")->GetShaderDataPtr();
-    mContext->VSSetShader(vs, 0, 0 );
-	ID3D11PixelShader* ps = mPixelShaderManager.GetResourcePtr("default")->GetShaderDataPtr();
-    mContext->PSSetShader( ps, 0, 0 );
-	scTexture* mtext = mTextureManager.GetResourcePtr("saber");
-	ID3D11ShaderResourceView* tex = mtext->GetTextureDataPtr();
-	mContext->PSSetShaderResources(0, 1, &tex);
-	mContext->PSSetSamplers(0, 1, &mSampler);
-
-    XMMATRIX worldMat = XMMatrixIdentity( );
-    worldMat = XMMatrixTranspose( worldMat );
-
-    XMMATRIX viewMat = XMMatrixLookAtLH(XMVectorSet(0, 0, 50, 1), XMVectorSet(0, 0, 0, 1), XMVectorSet(0, 1, 0, 1));
-    viewMat = XMMatrixTranspose( viewMat );
-
-	XMMATRIX projMat = XMMatrixPerspectiveFovLH( XM_PIDIV4, 500.f / 500.0f, 0.01f, 1000.0f );
-	projMat = XMMatrixTranspose( projMat );
-
-    mContext->UpdateSubresource( worldCB_, 0, 0, &worldMat, 0, 0 );
-    mContext->UpdateSubresource( viewCB_, 0, 0, &viewMat, 0, 0 );
-    mContext->UpdateSubresource( projCB_, 0, 0, &projMat, 0, 0 );
-
-    mContext->VSSetConstantBuffers( 0, 1, &worldCB_ );
-    mContext->VSSetConstantBuffers( 1, 1, &viewCB_ );
-    mContext->VSSetConstantBuffers( 2, 1, &projCB_ );
-
-    mContext->Draw( mesh->GetVertexCount(), 0 );*/
 
 }
 

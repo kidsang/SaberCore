@@ -164,7 +164,7 @@ void scSceneNode::ChangeParent( scSceneNode* newParent )
 void scSceneNode::AttachObject( scMovable* object )
 {
 	mObjects.push_back(object);
-	//object->SetParentNode(this);
+	object->_SetParentNode(this);
 }
 
 void scSceneNode::DetachObject( scMovable* object )
@@ -172,16 +172,16 @@ void scSceneNode::DetachObject( scMovable* object )
 	auto iter = find(mObjects.begin(), mObjects.end(), object);
 	if (iter != mObjects.end())
 	{
-		//(*iter)->SetParentNode(NULL);
+		(*iter)->_SetParentNode(NULL);
 		mObjects.erase(iter);
 	}
 	else
-		scErrMsg("!!!Scene node " + mName + " don't have child object " + object->GetName());
+		scErrMsg("--!Scene node " + mName + " don't have child object " + object->GetName());
 }
 
 scMovable* scSceneNode::DetachObject( unsigned int index )
 {
-	if (index > mObjects.size())
+	if (index >= mObjects.size())
 	{
 		scErrMsg("!!!Index out of range when detaching scene node " + mName + "'s object");
 		return NULL;
@@ -212,7 +212,7 @@ scMovable* scSceneNode::DetachObject( const std::string& name )
 
 scMovable* scSceneNode::GetObject( unsigned int index )
 {
-	if (index > mObjects.size())
+	if (index >= mObjects.size())
 	{
 		scErrMsg("!!!Index out of range when getting scene node " + mName + "'s object");
 		return NULL;

@@ -15,6 +15,8 @@
 #include "scRenderable.h"
 #include "scMovable.h"
 #include "scEntity.h"
+#include "scViewport.h"
+#include "scCamera.h"
 
 // win gdi 也有一个同名的宏
 #undef GetObjectW
@@ -29,6 +31,8 @@ class scSceneManager
 	typedef std::hash_map<std::string, scSceneNode*> SceneNodeMap;
 	typedef std::hash_map<std::string, scMovable*> ObjectMap;
 	typedef std::hash_map<std::string, scMovableFactory*> ObjectFactoryMap;
+	typedef std::hash_map<std::string, scCamera*> CameraMap;
+	typedef std::vector<scViewport*> ViewportList;
 
 private:
 	/// 场景根节点，该节点是只读的
@@ -45,10 +49,39 @@ private:
 	/// 当场景渲染时，场景管理类将需要渲染的对象加入渲染队列
 	/// TODO:暂且先用这个充数，将来要换成真正的类
 	RenderQueue mRenderQueue;
+	
+	/// viewport list
+	/// 可以有多个viewport同时存在
+	ViewportList mViewportList;
+	/// camera map 供名字查找用
+	CameraMap mCameraMap;
 
 public:
 	scSceneManager(void);
 	~scSceneManager(void);
+
+	/// 创建viewport
+	/// @param width 视口的宽
+	/// @param height 视口的高
+	/// @param posX 视口的左上角x坐标
+	/// @param posY 视口的左上角y坐标
+	/// @return 创建好的视口的指针
+	scViewport* CreateViewport(float width, float height, float posX, float posY);
+
+	/// 从viewport列表中返回已存在的viewport
+	/// @param index viewport的索引
+	/// @return 返回已存在的viewport，如果不存在则返回NULL
+	scViewport* GetViewport(unsigned int index);
+
+	/// 创建一个摄像机
+	/// @param name 摄像机的名字
+	/// @return 创建好的摄像机指针，如果失败则返回NULL
+	scCamera* CreateCamera(const std::string& name); 
+
+	/// 返回一个已创建的摄像机
+	/// @param name 摄像机的名字
+	/// @return 摄像机指针，如果不存在则返回NULL
+	scCamera* GetCamera(const std::string& name);
 
 	/// 创建场景节点
 	/// @param name 节点的名称
@@ -96,6 +129,12 @@ public:
 
 	// Get/Set
 public:
+	/// 返回viewport列表
+	const ViewportList& GetViewports()
+	{
+		return mViewportList;
+	}
+
 	/// 返回渲染队列
 	RenderQueue& GetRenderQueue()
 	{

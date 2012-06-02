@@ -19,6 +19,10 @@ class scRenderSystem
 private:
 	/// 窗口句柄
 	HWND mHwnd;
+	/// 窗口的宽
+	int mWindowWidth;
+	/// 窗口的高
+	int mWindowHeight;
 
 	/// dx11设备类型
 	/// 分为硬件，WARP和软件

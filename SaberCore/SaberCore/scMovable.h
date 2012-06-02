@@ -29,12 +29,16 @@ private:
 	std::string mName;
 	/// 创建该物件的场景管理类
 	scSceneManager* mSceneManager;
-	/// 该物体所属的场景节点
-	/// 一个物体在同一时刻最对只能被一个场景节点所拥有
-	//scSceneNode* mParentNode;
 
 	/// 描述该物件是否可见
 	bool mVisible;
+
+protected:
+	/// 该物体所属的场景节点
+	/// 当某个物体在同一时刻仅能被一个场景节点所拥有时
+	/// 这个属性才是有意义的
+	/// 请在子类中自行声明该属性的Get方法
+	scSceneNode* mParentNode;
 
 public:
 	/// 构造函数
@@ -66,13 +70,13 @@ public:
 		mVisible = isVisible;
 	}
 
-	/*/// 设置物体所属的节点
-	void SetParentNode(scSceneNode* node)
+	/// 设置物体所属的节点
+	void _SetParentNode(scSceneNode* node)
 	{
 		mParentNode = node;
 	}
 
-	/// 获取物体所属的节点
+	/*/// 获取物体所属的节点
 	scSceneNode* GetParentNode()
 	{
 		return mParentNode;

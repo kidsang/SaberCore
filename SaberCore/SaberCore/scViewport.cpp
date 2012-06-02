@@ -3,7 +3,7 @@
 
 
 scViewport::scViewport(float width, float height, float posX, float posY)
-	: mCamera(0), mNeedUpdate(true)
+	: mCamera(0), mNeedUpdate(true), mVisible(true)
 {
 	mViewport.Width = width;
 	mViewport.Height = height;
@@ -29,11 +29,13 @@ void scViewport::SetCamera( scCamera* newCam )
 
 	// 设置新的照相机
 	mCamera = newCam;
+	newCam->_SetViewport(this);
+
 	// 由于更换了摄像机，因此需要更新投影矩阵
 	_NotifyUpdate();
 }
 
-XMFLOAT4X4 scViewport::GetProjectionMatrix()
+const XMFLOAT4X4& scViewport::GetProjectionMatrix()
 {
 	// 更新矩阵
 	if (mNeedUpdate)

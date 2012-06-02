@@ -3,8 +3,8 @@
 
 
 scMovable::scMovable(scSceneManager* sceneManager, const std::string& name)
-	: mSceneManager(sceneManager), mName(name), mVisible(true)/*,
-	mParentNode(0)*/
+	: mSceneManager(sceneManager), mName(name), mVisible(true),
+	mParentNode(0)
 {
 }
 

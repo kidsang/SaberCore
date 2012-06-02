@@ -26,6 +26,9 @@ class scViewport
 	/// 标志位，标示当前投影矩阵是否需要被更新
 	bool mNeedUpdate;
 
+	/// 标志当前viewport是否可见
+	bool mVisible;
+
 public:
 	/// 构造函数
 	/// @param width 视口的宽
@@ -41,9 +44,15 @@ public:
 	///		  因此当新的摄像机加入时，需要把旧的摄像机去除
 	void SetCamera(scCamera* newCam);
 
+	/// 返回viewport当前的camera
+	scCamera* GetCamera()
+	{
+		return mCamera;
+	}
+
 	/// 返回该视口的投影矩阵
 	/// @note 当矩阵缓存过期时，会先计算更新
-	XMFLOAT4X4 GetProjectionMatrix();
+	const XMFLOAT4X4& GetProjectionMatrix();
 
 	/// 通知viewport更新投影矩阵
 	/// @note 该函数应该有camera调用
@@ -55,6 +64,18 @@ public:
 
 	// Get/Set
 public:
+	/// 设置该viewport的可见性
+	void SetVisible(bool isVisible)
+	{
+		mVisible = isVisible;
+	}
+
+	/// 返回该viewport的可见性
+	bool IsVisible()
+	{
+		return mVisible;
+	}
+
 	/// 返回视口的宽高比
 	/// 宽高比 = width / height
 	float GetAspectRatio()
